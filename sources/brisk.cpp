@@ -5,11 +5,6 @@
 
 
 int main() {
-    //Vid stream
-    /*std::vector<cv::KeyPoint> keypointsVid;
-    cv::Mat vidFrame, keys;
-    cv::VideoCapture vid("/home/nicklas/Downloads/sample-avi-file.avi");*/
-
     //Setup images and vectors for keypoints and descriptors.
     cv::Mat img1, img2;
     img1 = cv::imread("/home/nicklas/Desktop/img1.png", 0);
@@ -31,8 +26,7 @@ int main() {
 
     //Setup matcher
     cv::Ptr<cv::DescriptorMatcher> matcher = cv::DescriptorMatcher::create(cv::DescriptorMatcher::BRUTEFORCE_HAMMING);
-    std::vector<cv::DMatch> matches;
-    std::vector<cv::DMatch> good_matches;
+    std::vector<cv::DMatch> matches, good_matches;
     std::vector<cv::Point2f> sel_img1, sel_img2;
 
     //Match
@@ -69,24 +63,6 @@ int main() {
                     matchImg, cv::Scalar::all(-1), cv::Scalar::all(-1), std::vector<char>(),
                     cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
     cv::imshow("Matches", matchImg);
-
-    //Detect on vid stream
-    /*while(true) {
-        bool succes = vid.read(vidFrame);
-        if(!succes)
-        {
-            std::cout << "No more vid :) ";
-            break;
-        }
-        brisk->detect(vidFrame, keypointsVid);
-        cv::drawKeypoints(vidFrame, keypointsVid, keys);
-        cv::imshow("vidkeys", keys);
-        if(cv::waitKey(30) == 27)
-        {
-            std::cout << "ESC key pressed: Exiting video";
-            break;
-        }
-    }*/
     cv::waitKey(0);
     return 0;
 }
