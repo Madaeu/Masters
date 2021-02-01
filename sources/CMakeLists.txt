@@ -1,6 +1,5 @@
 find_package(OpenCV REQUIRED)
 
-
 add_executable(main main.cpp)
 add_executable(brisk brisk.cpp)
 
