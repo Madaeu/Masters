@@ -14,6 +14,7 @@ double cy = 2.331966e+02;
 
 cv::Mat K = (cv::Mat1d(3,3) << fx, 0, cx, 0, fy, cy, 0, 0, 1);
 cv::Mat dist = (cv::Mat1d(5,1) << -3.728755e-01, 2.037299e-01, 2.219027e-03, 1.383707e-03, -7.233722e-02);
+
 struct pose{
     cv::Mat R, t;
 };
@@ -36,7 +37,27 @@ double min_dist = 1000;
 //Pose holders and mask
 cv::Mat t, R, Mask;
 
-pose getPoseDiff(cv::Mat img1, cv::Mat img2, bool drawMatches){
+cv::Mat getProjectionMatrix(cv::Mat Rot, cv::Mat tra){
+    cv::Mat Tr = (cv::Mat1d(3,4));
+    Tr.at<double>(0, 0) = Rot.at<double>(0, 0);
+    Tr.at<double>(0, 1) = Rot.at<double>(0, 1);
+    Tr.at<double>(0, 2) = Rot.at<double>(0, 2);
+    Tr.at<double>(1, 0) = Rot.at<double>(1, 0);
+    Tr.at<double>(1, 1) = Rot.at<double>(1, 1);
+    Tr.at<double>(1, 2) = Rot.at<double>(1, 2);
+    Tr.at<double>(2, 0) = Rot.at<double>(2, 0);
+    Tr.at<double>(2, 1) = Rot.at<double>(2, 1);
+    Tr.at<double>(2, 2) = Rot.at<double>(2, 2);
+
+    Tr.at<double>(0, 3) = tra.at<double>(0, 0);
+    Tr.at<double>(1, 3) = tra.at<double>(0, 1);
+    Tr.at<double>(2, 3) = tra.at<double>(0, 2);
+
+    Tr = K*Tr;
+    return Tr;
+}
+
+std::vector<cv::DMatch> findAndMatchFeatures(cv::Mat img1, cv::Mat img2, bool drawMatches){
 
     std::vector<cv::DMatch> matches, good_matches;
     //Detect features
@@ -62,15 +83,22 @@ pose getPoseDiff(cv::Mat img1, cv::Mat img2, bool drawMatches){
             good_matches.push_back(matches[i]);
     }
 
-    if(drawMatches == true){
+    if(drawMatches){
         //Draw matches
         cv::Mat matchImg;
         cv::drawMatches(img1, keypointsimg1, img2, keypointsimg2, good_matches,
                         matchImg, cv::Scalar::all(-1), cv::Scalar::all(-1), std::vector<char>(),
                         cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
         cv::imshow("Matches", matchImg);
-        cv::waitKey(0);}
+        cv::waitKey(0);
+    }
+    return good_matches;
+}
 
+pose estimateMotion(cv::Mat img1, cv::Mat img2){
+
+    std::vector<cv::DMatch> good_matches;
+    good_matches = findAndMatchFeatures(img1, img2, false);
     std::vector<cv::Point2f> sel_img1, sel_img2;
 
     //Sort keypoints in images so only relevant keypoints are remaining
@@ -84,8 +112,8 @@ pose getPoseDiff(cv::Mat img1, cv::Mat img2, bool drawMatches){
     return {R.inv(), (-1*t)};
 }
 
-int main() {
 
+int main() {
     clock_t time_req;
     std::vector<cv::Mat> Transforms;
     std::vector<cv::Mat> Rotations, Translations;
@@ -94,14 +122,14 @@ int main() {
     cv::String directory = "/home/nicklas/Desktop/2011_09_26_drive_0002_extract/2011_09_26/2011_09_26_drive_0002_extract/image_00/data/*.png";
     std::vector<cv::String> filenames;
     cv::glob(directory, filenames, false);
-
+   // triangulateImagePoints(img1d, img2d);
     time_req=clock();
     for(int i = 0; i<(filenames.size()-1); i++) {
         img1 = cv::imread(filenames[i], 0);
         img2 = cv::imread(filenames[i + 1], 0);
         cv::undistort(img1, img1d, K, dist, cv::noArray());
         cv::undistort(img2, img2d, K, dist, cv::noArray());
-        auto[R, t] = getPoseDiff(img1d, img2d, false);
+        auto[R, t] = estimateMotion(img1d, img2d);
         Rotations.push_back(R);
         Translations.push_back(t);
 
@@ -168,8 +196,8 @@ int main() {
      FileHandler.close();
  */
     //Sanity checks
-    std::cout << "Rotations: " << Rotations.size() << ", Translations: " << Translations.size() << std::endl;
-    std::cout << "trans: " << Transforms.size() << std::endl;
+   // std::cout << "Rotations: " << Rotations.size() << ", Translations: " << Translations.size() << std::endl;
+   // std::cout << "trans: " << Transforms.size() << std::endl;
 
     return 0;
 }
