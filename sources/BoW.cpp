@@ -147,12 +147,12 @@ int main(){
 
     std::vector<std::vector<cv::Mat > > features;
     loadFeatures(features);
-   testVocCreation(features);
+
+    testVocCreation(features);
 
     wait();
 
     testDatabase(features);
 
-    std::cout << "Done!" << std::endl;
     return 0;
 }
