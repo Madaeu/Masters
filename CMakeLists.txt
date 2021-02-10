@@ -4,4 +4,6 @@ project(Masters)
 
 set(CMAKE_CXX_STANDARD 14)
 
+add_subdirectory(third_party)
+
 add_subdirectory(sources)
