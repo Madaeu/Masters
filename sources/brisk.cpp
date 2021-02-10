@@ -61,11 +61,13 @@ std::vector<cv::DMatch> findAndMatchFeatures(cv::Mat img1, cv::Mat img2, bool dr
 
     std::vector<cv::DMatch> matches, good_matches;
     //Detect features
-    cv::Ptr<cv::BRISK> brisk = cv::BRISK::create(Threshl, Octaves, PatternScales);
-    brisk->detect(img1, keypointsimg1);
-    brisk->detect(img2, keypointsimg2);
-    brisk->compute(img1, keypointsimg1, descriptorsimg1);
-    brisk->compute(img2, keypointsimg2, descriptorsimg2);
+    cv::Ptr<cv::FeatureDetector> ORB = cv::ORB::create(500, 1.2f, 1);
+    /*ORB->detect(img1, keypointsimg1);
+    ORB->detect(img2, keypointsimg2);
+    ORB->compute(img1, keypointsimg1, descriptorsimg1);
+    ORB->compute(img2, keypointsimg2, descriptorsimg2);*/
+    ORB->detectAndCompute(img1, cv::Mat{}, keypointsimg1, descriptorsimg1);
+    ORB->detectAndCompute(img2, cv::Mat{}, keypointsimg2, descriptorsimg2);
 
     //Match
     matcher->match(descriptorsimg1, descriptorsimg2, matches);
