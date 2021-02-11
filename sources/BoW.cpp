@@ -29,7 +29,7 @@ void loadFeatures(std::vector<std::vector<cv::Mat > > &features)
     cv::String directory = "/home/nicklas/Desktop/2011_09_26_drive_0002_extract/2011_09_26/2011_09_26_drive_0002_extract/image_00/data/*.png";
     std::vector<cv::String> filenames;
     cv::glob(directory, filenames, false);
-
+    //cv::Mat img = cv::imread()
     std::cout << "Extracting ORB features..." << std::endl;
     for(int i = 0; i < (filenames.size()); ++i)
     {
@@ -56,8 +56,8 @@ void wait()
 void testVocCreation(const std::vector<std::vector<cv::Mat > > &features)
 {
     // branching factor and depth levels
-    const int k = 9;
-    const int L = 3;
+    const int k = 10;
+    const int L = 5;
     const DBoW2::WeightingType weight = DBoW2::TF_IDF;
     const DBoW2::ScoringType scoring = DBoW2::L1_NORM;
 
@@ -85,12 +85,13 @@ void testVocCreation(const std::vector<std::vector<cv::Mat > > &features)
         }
     }
 
+
+
     // save the vocabulary to disk
     std::cout << std::endl << "Saving vocabulary..." << std::endl;
     voc.save("small_voc.yml.gz");
     std::cout << "Done" << std::endl;
 }
-
 
 
 void testDatabase(const std::vector<std::vector<cv::Mat > > &features)
@@ -146,13 +147,20 @@ void testDatabase(const std::vector<std::vector<cv::Mat > > &features)
 int main(){
 
     std::vector<std::vector<cv::Mat > > features;
-    loadFeatures(features);
+    cv::Mat img = cv::imread("/home/nicklas/Desktop/2011_09_26_drive_0002_extract/2011_09_26/2011_09_26_drive_0002_extract/image_00/data/0000000009.png");
+    OrbVocabulary voc("small_voc.yml.gz");
+    cv::Ptr<cv::ORB> orb = cv::ORB::create();
+    cv::Mat descriptors;
+    std::vector<cv::KeyPoint> keypoints;
+    orb->detectAndCompute(img, cv::noArray(), keypoints, descriptors);
+    features.push_back(std::vector<cv::Mat >());
+    changeStructure(descriptors, features.back());
 
-    testVocCreation(features);
+    DBoW2::QueryResults ret;
+    OrbDatabase db("small_db.yml.gz");
 
-    wait();
-
-    testDatabase(features);
+    db.query(features[0], ret, 4);
+    std::cout << ret << std::endl;
 
     return 0;
 }
