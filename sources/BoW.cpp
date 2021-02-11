@@ -7,8 +7,6 @@
 #include "TemplatedVocabulary.h"
 #include <DBoW2.h>
 
-const int NIMAGES = 82;
-
 void changeStructure(const cv::Mat &plain, std::vector<cv::Mat> &out)
 {
     out.resize(plain.rows);
@@ -22,15 +20,14 @@ void changeStructure(const cv::Mat &plain, std::vector<cv::Mat> &out)
 void loadFeatures(std::vector<std::vector<cv::Mat > > &features)
 {
     features.clear();
-    features.reserve(NIMAGES);
 
     cv::Ptr<cv::ORB> orb = cv::ORB::create();
 
-    cv::String directory = "/home/nicklas/Desktop/2011_09_26_drive_0002_extract/2011_09_26/2011_09_26_drive_0002_extract/image_00/data/*.png";
+    cv::String directory = "/home/nicklas/Desktop/2011_09_26_drive_0009_extract/2011_09_26/2011_09_26_drive_0009_extract/image_00/data/*.png";
     std::vector<cv::String> filenames;
     cv::glob(directory, filenames, false);
-    //cv::Mat img = cv::imread()
     std::cout << "Extracting ORB features..." << std::endl;
+    features.reserve(filenames.size());
     for(int i = 0; i < (filenames.size()); ++i)
     {
 
@@ -71,12 +68,13 @@ void testVocCreation(const std::vector<std::vector<cv::Mat > > &features)
          << voc << std::endl << std::endl;
 
     // lets do something with this vocabulary
+    /*
     std::cout << "Matching images against themselves (0 low, 1 high): " << std::endl;
     DBoW2::BowVector v1, v2;
-    for(int i = 0; i < NIMAGES; i++)
+    for(int i = 0; i < features.size(); i++)
     {
         voc.transform(features[i], v1);
-        for(int j = 0; j < NIMAGES; j++)
+        for(int j = 0; j < features.size(); j++)
         {
             voc.transform(features[j], v2);
 
@@ -85,7 +83,7 @@ void testVocCreation(const std::vector<std::vector<cv::Mat > > &features)
         }
     }
 
-
+*/
 
     // save the vocabulary to disk
     std::cout << std::endl << "Saving vocabulary..." << std::endl;
@@ -99,7 +97,7 @@ void testDatabase(const std::vector<std::vector<cv::Mat > > &features)
     std::cout << "Creating a small database..." << std::endl;
 
     // load the vocabulary from disk
-    OrbVocabulary voc("small_voc.yml.gz");
+    OrbVocabulary voc("big_voc.yml.gz");
 
     OrbDatabase db(voc, false, 0); // false = do not use direct index
     // (so ignore the last param)
@@ -108,7 +106,7 @@ void testDatabase(const std::vector<std::vector<cv::Mat > > &features)
     // db creates a copy of the vocabulary, we may get rid of "voc" now
 
     // add images to the database
-    for(int i = 0; i < NIMAGES; i++)
+    for(int i = 0; i < features.size(); i++)
     {
         db.add(features[i]);
     }
@@ -121,7 +119,7 @@ void testDatabase(const std::vector<std::vector<cv::Mat > > &features)
     std::cout << "Querying the database: " << std::endl;
 
     DBoW2::QueryResults ret;
-    for(int i = 0; i < NIMAGES; i++)
+    for(int i = 0; i < features.size(); i++)
     {
         db.query(features[i], ret, 4);
 
@@ -137,18 +135,17 @@ void testDatabase(const std::vector<std::vector<cv::Mat > > &features)
     std::cout << "Saving database..." << std::endl;
     db.save("small_db.yml.gz");
     std::cout << "... done!" << std::endl;
-
-    // once saved, we can load it again
-    std::cout << "Retrieving database once again..." << std::endl;
-    OrbDatabase db2("small_db.yml.gz");
-    std::cout << "... done! This is: " << std::endl << db2 << std::endl;
 }
 
 int main(){
 
+
     std::vector<std::vector<cv::Mat > > features;
-    cv::Mat img = cv::imread("/home/nicklas/Desktop/2011_09_26_drive_0002_extract/2011_09_26/2011_09_26_drive_0002_extract/image_00/data/0000000009.png");
-    OrbVocabulary voc("small_voc.yml.gz");
+
+    //Look for img in the database.
+    cv::Mat img = cv::imread("/home/nicklas/Desktop/2011_09_26_drive_0009_extract/2011_09_26/2011_09_26_drive_0009_extract/image_00/data/0000000300.png");
+
+    //Find descriptors in image
     cv::Ptr<cv::ORB> orb = cv::ORB::create();
     cv::Mat descriptors;
     std::vector<cv::KeyPoint> keypoints;
@@ -156,10 +153,10 @@ int main(){
     features.push_back(std::vector<cv::Mat >());
     changeStructure(descriptors, features.back());
 
+    //Find matching images in the database
     DBoW2::QueryResults ret;
     OrbDatabase db("small_db.yml.gz");
-
-    db.query(features[0], ret, 4);
+    db.query(features[0], ret, 4); //Features from img, query result, max number of matches
     std::cout << ret << std::endl;
 
     return 0;
