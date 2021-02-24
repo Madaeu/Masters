@@ -1,3 +1,6 @@
 [submodule "third_party/DBoW2"]
 	path = third_party/DBoW2
 	url = https://github.com/dorian3d/DBoW2.git
+[submodule "third_party/Sophus"]
+	path = third_party/Sophus
+	url = https://github.com/strasdat/Sophus.git
