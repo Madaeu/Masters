@@ -28,6 +28,24 @@ function build_cmake_deps()
    build_dir="$(pwd)/build"
    install_dir="$(pwd)/install"
    
+   #################
+   ##### Eigen
+   cmake_opts=("-DCMAKE_BUILD_TYPE=${build_type}"
+               "-DCMAKE_INSTALL_PREFIX=${install_dir}"
+               "-DCMAKE_EXPORT_NO_PACKAGE_REGISTRY=ON")
+   build_cmake_dep "eigen" ${cmake_opts[@]}
+
+   eigen_include_dir="${install_dir}/include/eigen3"
+   
+   #################
+   ##### Sophus
+   cmake_opts=("-DCMAKE_BUILD_TYPE=${build_type}"
+               "-DCMAKE_INSTALL_PREFIX=${install_dir}"
+	       "-DCMAKE_EXPORT_NO_PACKAGE_REGISTRY=ON"
+               "-DBUILD_TESTS=OFF"
+               "-DEIGEN3_INCLUDE_DIR=${eigen_include_dir}")
+   build_cmake_dep "Sophus" ${cmake_opts[@]}
+
 
    #################
    ##### DBoW2
