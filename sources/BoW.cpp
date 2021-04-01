@@ -23,9 +23,10 @@ void loadFeatures(std::vector<std::vector<cv::Mat > > &features)
 
     cv::Ptr<cv::ORB> orb = cv::ORB::create();
 
-    cv::String directory = "/home/nicklas/Desktop/2011_09_26_drive_0009_extract/2011_09_26/2011_09_26_drive_0009_extract/image_00/data/*.png";
+    cv::String directory = "/home/nicklas/Desktop/00/image_0/*.png";
     std::vector<cv::String> filenames;
     cv::glob(directory, filenames, false);
+
     std::cout << "Extracting ORB features..." << std::endl;
     features.reserve(filenames.size());
     for(int i = 0; i < (filenames.size()); ++i)
@@ -87,7 +88,7 @@ void testVocCreation(const std::vector<std::vector<cv::Mat > > &features)
 
     // save the vocabulary to disk
     std::cout << std::endl << "Saving vocabulary..." << std::endl;
-    voc.save("small_voc.yml.gz");
+    voc.save("double_voc.yml.gz");
     std::cout << "Done" << std::endl;
 }
 
@@ -97,7 +98,7 @@ void testDatabase(const std::vector<std::vector<cv::Mat > > &features)
     std::cout << "Creating a small database..." << std::endl;
 
     // load the vocabulary from disk
-    OrbVocabulary voc("big_voc.yml.gz");
+    OrbVocabulary voc("KITTIvo02_voc.yml.gz");
 
     OrbDatabase db(voc, false, 0); // false = do not use direct index
     // (so ignore the last param)
@@ -110,6 +111,7 @@ void testDatabase(const std::vector<std::vector<cv::Mat > > &features)
     {
         db.add(features[i]);
     }
+    std::cout << "Howdy: " << db.getVocabulary() << std::endl;
 
     std::cout << "... done!" << std::endl;
 
@@ -141,10 +143,11 @@ int main(){
 
 
     std::vector<std::vector<cv::Mat > > features;
-
+    loadFeatures(features);
+    testVocCreation(features);
     //Look for img in the database.
-    cv::Mat img = cv::imread("/home/nicklas/Desktop/2011_09_26_drive_0009_extract/2011_09_26/2011_09_26_drive_0009_extract/image_00/data/0000000300.png");
-
+ //   cv::Mat img = cv::imread("/home/nicklas/Desktop/2011_09_26_drive_0009_extract/2011_09_26/2011_09_26_drive_0009_extract/image_00/data/0000000300.png");
+/*
     //Find descriptors in image
     cv::Ptr<cv::ORB> orb = cv::ORB::create();
     cv::Mat descriptors;
@@ -158,6 +161,6 @@ int main(){
     OrbDatabase db("small_db.yml.gz");
     db.query(features[0], ret, 4); //Features from img, query result, max number of matches
     std::cout << ret << std::endl;
-
+*/
     return 0;
 }
