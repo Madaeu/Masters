@@ -1,0 +1,8 @@
+//
+// Created by madaeu on 3/4/21.
+//
+
+#ifndef MASTERS_FEATURE_DETECTOR_H
+#define MASTERS_FEATURE_DETECTOR_H
+
+#endif //MASTERS_FEATURE_DETECTOR_H
