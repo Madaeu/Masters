@@ -17,7 +17,7 @@ public:
     virtual bool hasIntrinsics() { return false; }
     virtual bool hasMore() = 0;
 
-    virtual PinholeCamera<float> getIntrinsics() {return PinholeCamera<float>{}; }
+    virtual msc::PinholeCamera<float> getIntrinsics() {return msc::PinholeCamera<float>{}; }
 
     virtual void grabFrames(double& timestamp, cv::Mat* img, cv::Mat* dpt = nullptr) = 0;
 };

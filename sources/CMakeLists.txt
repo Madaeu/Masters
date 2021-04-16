@@ -1,6 +1,7 @@
 add_subdirectory(common)
 add_subdirectory(core)
 add_subdirectory(drivers)
+add_subdirectory(cuda)
 
 #find_package(OpenCV REQUIRED)
 find_package(DBoW2 REQUIRED)
@@ -19,7 +20,7 @@ target_link_libraries(brisk ${OpenCV_LIBS})
 target_link_libraries(BoW ${OpenCV_LIBS})
 target_link_libraries(BoW ${DBoW2_LIBS})
 
-target_link_libraries(demo core common drivers)
+target_link_libraries(demo core common drivers masters_cuda ${OpenCV_LIBS})
 
 target_link_libraries(main ${OpenCV_LIBS})
 

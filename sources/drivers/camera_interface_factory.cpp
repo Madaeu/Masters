@@ -52,10 +52,3 @@ std::vector<std::string> CameraInterfaceFactory::partitionUrl(const std::string 
     std::string remainder = url.substr(pos + prefixTag_.length());
     return {prefix, remainder};
 }
-
-template <typename T>
-struct InterfaceRegistrar{
-    InterfaceRegistrar(){
-        CameraInterfaceFactory::get()->registerInterface<T>();
-    }
-};

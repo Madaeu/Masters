@@ -40,7 +40,7 @@ public:
     void registerInterface()
     {
         auto factoryObject = std::make_shared<T>();
-        typename FactoryMapT::value_type pair(factoryObject->getPrefix, factoryObject);
+        typename FactoryMapT::value_type pair(factoryObject->getPrefix(), factoryObject);
         factoryMap_.insert(pair);
         urlForms_.push_back(factoryObject->getUrlPattern(prefixTag_));
         supportedInterfaces_.push_back(factoryObject->getPrefix());
@@ -59,5 +59,12 @@ private:
     const std::string prefixTag_ = "://";
     static std::shared_ptr<CameraInterfaceFactory> ptr_;
 
+};
+
+template <typename T>
+struct InterfaceRegistrar{
+    InterfaceRegistrar(){
+        CameraInterfaceFactory::get()->template registerInterface<T>();
+    }
 };
 #endif //MASTERS_CAMERA_INTERFACE_FACTORY_H
