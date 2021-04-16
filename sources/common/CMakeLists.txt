@@ -1,9 +1,15 @@
 set(common_headers
         pinhole_camera.h
-        camera_pyramid.h)
+        camera_pyramid.h
+        index_map.h
+        transformations.h
+        correspondence.h
+        M_estimators.h
+        lucas_kanade_dense.h
+        dense_SFM.h)
 
-add_library(common INTERFACE)
-target_include_directories(common INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(msc_common INTERFACE)
+target_include_directories(msc_common INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(common INTERFACE
+target_link_libraries(msc_common INTERFACE
         opencv_core)
