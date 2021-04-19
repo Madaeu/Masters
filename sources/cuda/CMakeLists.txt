@@ -14,28 +14,29 @@ set(CMAKE_CUDA_FLAGS "${_TMP_STR}")
 
 set(cuda_sources
         cuda_image_proc.cpp
-        cuda_depth_aligner.cpp)
+        cuda_context.cpp)
 
 set(cuda_headers
+        device_info.h
+        cuda_context.h
         kernel_utilities.h
         launch_utilities.h
         cuda_image_proc.h
-        cuda_depth_aligner.h
         reduction_items.h)
 
 set_source_files_properties(${cuda_sources} PROPERTIES LANGUAGE CUDA)
 
-add_library(masters_cuda SHARED ${cuda_sources} ${cuda_headers})
-target_include_directories(masters_cuda PUBLIC
+add_library(msc_cuda SHARED ${cuda_sources} ${cuda_headers})
+target_include_directories(msc_cuda PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(masters_cuda PUBLIC
+target_link_libraries(msc_cuda PUBLIC
         msc_common
         VisionCore
         Eigen3::Eigen
         cuda)
 
-set_property(TARGET masters_cuda PROPERTY CUDA_STANDARD 17)
-set_target_properties(masters_cuda PROPERTIES POSITION_INDEPENDENT_CODE ON)
-set_target_properties(masters_cuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-set_target_properties(masters_cuda PROPERTIES RELOCATABLE_DEVICE_CODE ON)
+set_property(TARGET msc_cuda PROPERTY CUDA_STANDARD 17)
+set_target_properties(msc_cuda PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(msc_cuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+set_target_properties(msc_cuda PROPERTIES RELOCATABLE_DEVICE_CODE ON)

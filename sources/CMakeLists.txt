@@ -20,7 +20,7 @@ target_link_libraries(brisk ${OpenCV_LIBS})
 target_link_libraries(BoW ${OpenCV_LIBS})
 target_link_libraries(BoW ${DBoW2_LIBS})
 
-target_link_libraries(demo core common drivers masters_cuda ${OpenCV_LIBS})
+target_link_libraries(demo msc_core msc_common msc_drivers msc_cuda ${OpenCV_LIBS})
 
 target_link_libraries(main ${OpenCV_LIBS})
 

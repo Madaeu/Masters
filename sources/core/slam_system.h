@@ -55,7 +55,7 @@ private:
 
     //Variables
     msc::PinholeCamera<Scalar> origCam_;
-    CameraPyramid<Scalar> camera_pyr_;
+    msc::CameraPyramid<Scalar> camera_pyr_;
 
     std::unique_ptr<TrackerT> tracker_;
     std::unique_ptr<MapperT> mapper_;
@@ -79,7 +79,7 @@ SlamSystem<Scalar, CS>::~SlamSystem() {
 template<typename Scalar, int CS>
 void SlamSystem<Scalar, CS>::initializeSystem(msc::PinholeCamera<Scalar> &cam) {
     origCam_ = cam;
-    camera_pyr_ = CameraPyramid<Scalar>(cam, 4);
+    camera_pyr_ = msc::CameraPyramid<Scalar>(cam, 4);
 
     tracker_ = std::make_unique<TrackerT>(camera_pyr_);
     mapper_ = std::make_unique<MapperT>(camera_pyr_);
