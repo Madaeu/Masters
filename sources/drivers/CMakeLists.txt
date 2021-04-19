@@ -8,14 +8,14 @@ set(driver_headers
         camera_interface.h
         camera_interface_factory.h)
 
-add_library(drivers SHARED ${driver_sources} ${driver_headers})
+add_library(msc_drivers SHARED ${driver_sources} ${driver_headers})
 
-target_include_directories(drivers PUBLIC
+target_include_directories(msc_drivers PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/dataset
         ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(drivers PUBLIC
-        common
+target_link_libraries(msc_drivers PUBLIC
+        msc_common
         Sophus::Sophus
         Eigen3::Eigen
         boost_filesystem)

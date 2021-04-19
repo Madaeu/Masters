@@ -22,7 +22,8 @@ namespace msc {
         EIGEN_PURE_DEVICE_FUNC static inline void warpReduceSum(CorrespondenceReductionItem<Scalar> &value)
         {
             #pragma unroll
-            for (unsigned int offset = warpSize / 2; offset > 0; offset /= 2) {
+            for (unsigned int offset = warpSize / 2; offset > 0; offset /= 2)
+            {
                 value.residual += vc::shfl_down(value.residual, offset);
                 value.inliers += vc::shfl_down(value.inliers, offset);
             }
@@ -30,15 +31,17 @@ namespace msc {
 
 #endif
 
-        EIGEN_DEVICE_FUNC inline CorrespondenceReductionItem<Scalar>
-        operator+(const CorrespondenceReductionItem<Scalar> &rhs) const {
+        EIGEN_DEVICE_FUNC inline CorrespondenceReductionItem<Scalar> operator+(const
+        CorrespondenceReductionItem<Scalar> &rhs) const
+        {
             CorrespondenceReductionItem<Scalar> result;
             result += rhs;
             return result;
         }
 
         EIGEN_DEVICE_FUNC inline CorrespondenceReductionItem<Scalar>&
-        operator+=(const CorrespondenceReductionItem<Scalar> &rhs) {
+                operator+=(const CorrespondenceReductionItem<Scalar> &rhs)
+        {
             residual += rhs.residual;
             inliers += rhs.inliers;
             return *this;
@@ -53,7 +56,8 @@ namespace msc {
         using HessianT = vc::types::SquareUpperTriangularMatrix<Scalar, NP>;
         using JacobianT = Eigen::Matrix<Scalar, NP, 1>;
 
-        EIGEN_DEVICE_FUNC JTJJrReductionItem() {
+        EIGEN_DEVICE_FUNC JTJJrReductionItem()
+        {
             JtJ = HessianT::Zero();
             Jtr = JacobianT::Zero();
             residual = Scalar(0);
@@ -81,14 +85,16 @@ namespace msc {
 #endif
 
         EIGEN_DEVICE_FUNC inline JTJJrReductionItem<Scalar, NP>
-        operator+(const JTJJrReductionItem<Scalar, NP> &rhs) const {
+        operator+(const JTJJrReductionItem<Scalar, NP> &rhs) const
+        {
             JTJJrReductionItem<Scalar, NP> result;
             result += rhs;
             return result;
         }
 
-        EIGEN_DEVICE_FUNC inline JTJJrReductionItem<Scalar, NP>
-        operator+=(const JTJJrReductionItem<Scalar, NP> &rhs) {
+        EIGEN_DEVICE_FUNC inline JTJJrReductionItem<Scalar, NP>&
+        operator+=(const JTJJrReductionItem<Scalar, NP> &rhs)
+        {
             JtJ += rhs.JtJ;
             Jtr += rhs.Jtr;
             residual += rhs.residual;
@@ -104,8 +110,7 @@ namespace msc {
 
 } //namespace msc
 
-#ifdef __CUDACC__
-
+#if __CUDACC__
 namespace vc
 {
 
@@ -156,41 +161,43 @@ SPECIALIZE_CorrespondenceReductionItem(float)
 #undef SPECIALIZE_CorrespondenceReductionItem
 
 } // namespace vc
+
 namespace msc
 {
     template <typename Scalar>
     struct reduction_traits<msc::CorrespondenceReductionItem<Scalar>>
     {
-        using CorrReducT = msc::CorrespondenceReductionItem<Scalar>;
+        using OurT = msc::CorrespondenceReductionItem<Scalar>;
 
-        static inline EIGEN_PURE_DEVICE_FUNC void warpReduceSum(CorrReducT& item)
+        static inline EIGEN_PURE_DEVICE_FUNC void warpReduceSum(OurT& item)
         {
-            CorrReducT::warpReduceSum(item);
+            OurT::warpReduceSum(item);
         }
 
-        static inline EIGEN_DEVICE_FUNC CorrReducT zero()
+        static inline EIGEN_DEVICE_FUNC OurT zero()
         {
-            return CorrReducT();
+            return OurT();
         }
     };
 
     template <typename Scalar, int NP>
     struct reduction_traits<msc::JTJJrReductionItem<Scalar, NP>>
     {
-        using JTJJrReducT = msc::JTJJrReductionItem<Scalar,NP>;
+        using OurT = msc::JTJJrReductionItem<Scalar,NP>;
 
-        static inline EIGEN_PURE_DEVICE_FUNC void warpReduceSum(JTJJrReducT& item)
+        static inline EIGEN_PURE_DEVICE_FUNC void warpReduceSum(OurT& item)
         {
-            JTJJrReducT::warpReduceSum(item);
+            OurT::warpReduceSum(item);
         }
 
-        static inline EIGEN_DEVICE_FUNC JTJJrReducT zero()
+        static inline EIGEN_DEVICE_FUNC OurT zero()
         {
-            return JTJJrReducT();
+            return OurT();
         }
     };
-#endif // __CUDACC__
+
 } //namespace msc
 
+#endif
 
 #endif //MASTERS_REDUCTION_ITEMS_H

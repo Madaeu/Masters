@@ -6,11 +6,11 @@
 #include "camera_interface_factory.h"
 #include "feature_detector.h"
 #include "slam_system.h"
-
 #include <iostream>
 
 int main()
 {
+    /*
     std::unique_ptr<CameraInterface> camInterface;
     camInterface = CameraInterfaceFactory::get()->getInterfaceFromUrl("kitti:///home/madaeu/Masters/data/kitti/2011_09_26/2011_09_26_drive_0001_sync/image_03");
     msc::PinholeCamera<float> camera = camInterface->getIntrinsics();
@@ -23,8 +23,7 @@ int main()
 
     camInterface->grabFrames(timestamp, &image);
 
-    slamSystem->bootstrapOneFrame(timestamp, image);
-
+    slamSystem->bootstrapOneFrame(timestamp, image);*/
 
 
     return 0;

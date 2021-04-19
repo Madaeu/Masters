@@ -25,7 +25,7 @@ public:
     using KeyframePtr = typename KeyframeT::Ptr;
     using SE3T = Sophus::SE3<Scalar>;
 
-    explicit Mapper(const CameraPyramid<Scalar>& cameraPyramid);
+    explicit Mapper(const msc::CameraPyramid<Scalar>& cameraPyramid);
 
     void reset();
 
@@ -46,12 +46,12 @@ private:
 
     MapPtr map_;
 
-    CameraPyramid<Scalar> cameraPyramid_;
+    msc::CameraPyramid<Scalar> cameraPyramid_;
 
 };
 
 template<typename Scalar, int CS>
-Mapper<Scalar, CS>::Mapper(const CameraPyramid<Scalar>& cameraPyramid)
+Mapper<Scalar, CS>::Mapper(const msc::CameraPyramid<Scalar>& cameraPyramid)
 : cameraPyramid_(cameraPyramid)
 {
     map_ = std::make_shared<MapT>();

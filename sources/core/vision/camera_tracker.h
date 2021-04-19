@@ -17,7 +17,7 @@ template <typename Scalar>
 class CameraTracker {
 public:
     using GradientT = Eigen::Matrix<float, 1,2>;
-    using CameraPyramidT = CameraPyramid<Scalar>;
+    using CameraPyramidT = msc::CameraPyramid<Scalar>;
     using Keyframef = Keyframe<float>;
     using SE3f = Sophus::SE3<float>;
     using ImageBufferPyramid = vc::RuntimeBufferPyramidManaged<float, vc::TargetDeviceCUDA>;

@@ -9,4 +9,4 @@
 	url = https://gitlab.com/libeigen/eigen.git
 [submodule "third_party/vision_core"]
 	path = third_party/vision_core
-	url = https://github.com/jczarnowski/vision_core.git
+	url = https://github.com/lukier/vision_core.git

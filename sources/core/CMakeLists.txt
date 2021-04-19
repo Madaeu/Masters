@@ -12,15 +12,15 @@ set(core_headers
         slam_system.h)
 
 #add_library(core SHARED ${core_sources} ${core_headers})
-add_library(core INTERFACE)
+add_library(msc_core INTERFACE)
 
-target_include_directories(core INTERFACE
+target_include_directories(msc_core INTERFACE
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/vision
         ${CMAKE_CURRENT_SOURCE_DIR}/features
         ${CMAKE_CURRENT_SOURCE_DIR}/mapping)
 
-target_link_libraries(core INTERFACE
-        common
-        masters_cuda
+target_link_libraries(msc_core INTERFACE
+        msc_common
+        msc_cuda
         VisionCore)
