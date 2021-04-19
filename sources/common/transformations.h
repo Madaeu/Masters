@@ -159,6 +159,7 @@ namespace msc
      * @return
      */
     template<typename T>
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     T poseDistance(const Sophus::SE3<T>& poseA,
                    const Sophus::SE3<T>& poseB,
                    T translationWeight = 8.0,
@@ -177,6 +178,7 @@ namespace msc
      * [I, -(Rx)^]
      */
     template<typename T>
+    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     Eigen::Matrix<T, 3, 6> transformJacobianPose(const Eigen::Matrix<T,3,1>& pt, const Sophus::SE3<T>& pose){
         Eigen::Matrix<T,3,6> dXdt;
         dXdt.template block<3,3>(0,0) = Eigen::Matrix<T,3,3>::Identity();

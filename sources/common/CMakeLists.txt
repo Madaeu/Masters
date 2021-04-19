@@ -12,4 +12,7 @@ add_library(msc_common INTERFACE)
 target_include_directories(msc_common INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(msc_common INTERFACE
+        Eigen3::Eigen
+        Sophus::Sophus
+        VisionCore
         opencv_core)

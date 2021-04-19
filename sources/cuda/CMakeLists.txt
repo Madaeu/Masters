@@ -14,6 +14,7 @@ set(CMAKE_CUDA_FLAGS "${_TMP_STR}")
 
 set(cuda_sources
         cuda_image_proc.cpp
+        cuda_SE3_aligner.cpp
         cuda_context.cpp)
 
 set(cuda_headers
@@ -21,6 +22,7 @@ set(cuda_headers
         cuda_context.h
         kernel_utilities.h
         launch_utilities.h
+        cuda_SE3_aligner.h
         cuda_image_proc.h
         reduction_items.h)
 
