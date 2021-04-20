@@ -24,11 +24,12 @@ set(cuda_headers
         cuda_context.h
         kernel_utilities.h
         launch_utilities.h
+        reduction_items.h
+        synced_pyramid.h
         cuda_SE3_aligner.h
         cuda_SFM_aligner.h
         cuda_depth_aligner.h
-        cuda_image_proc.h
-        reduction_items.h)
+        cuda_image_proc.h)
 
 set_source_files_properties(${cuda_sources} PROPERTIES LANGUAGE CUDA)
 
