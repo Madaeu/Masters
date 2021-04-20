@@ -120,8 +120,8 @@ namespace msc
     EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     Sophus::SE3<T> relativePose(const Sophus::SE3<T>& poseA,
                                 const Sophus::SE3<T>& poseB,
-                                const JacT& jacobianA,
-                                const JacT& jacobianB){
+                                JacT& jacobianA,
+                                JacT& jacobianB){
         using SE3 = Sophus::SE3<T>;
         using Vec3 = Eigen::Matrix<T,3,1>;
 
@@ -143,7 +143,7 @@ namespace msc
         jacobianB.template block<3,3>(0,0) = rotationA.transpose();
         jacobianB.template block<3,3>(3,0).setZero();
         //Determine the Jacobian of the relative pose w.r.t. the rotation of B
-        jacobianB.template block<3,3>(3,0).setZero();
+        jacobianB.template block<3,3>(0,3).setZero();
         jacobianB.template block<3,3>(3,3) = rotationA.transpose();
 
         return poseAB;

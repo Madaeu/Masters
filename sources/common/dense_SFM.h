@@ -15,12 +15,11 @@
 
 namespace msc
 {
-    template<typename Scalar>
     struct DenseSFMParameters
     {
-        Scalar huberDelta{0};
-        Scalar avgDepth{2};
-        Scalar minDepth{0};
+        float huberDelta{0};
+        float avgDepth{2};
+        float minDepth{0};
         int validBorder{2};
     };
 
@@ -46,7 +45,7 @@ namespace msc
              typename SE3T=Sophus::SE3<Scalar>,
              typename ImageGradT=Eigen::Matrix<Scalar, 1,2>,
              typename GradientBuffer = vc::Image2DView<ImageGradT, Device>,
-             typename ReductionItem=msc::CorrespondenceReductionItem<Scala>>
+             typename ReductionItem=msc::CorrespondenceReductionItem<Scalar>>
     EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     void denseSFMEvaluateError(std::size_t x,
                                std::size_t y,
@@ -61,7 +60,7 @@ namespace msc
                                ReductionItem& result)
     {
         // Find the pixel correspondences between images
-        const Correspondence<Scalar> correspondence = msc::findCorrespondence(x,y, depth0, camera, relativePose);
+        const Correspondence<Scalar> correspondence = msc::findCorrespondence(x,y, depth0(x,y), camera, relativePose);
         if(correspondence.valid)
         {
             // Determine the photometric error
@@ -72,12 +71,12 @@ namespace msc
 
             // Calculate Jacobian of the photometric error w.r.t. the proximity
             Eigen::Matrix<Scalar,2,1> pixel1JacProximity;
-            findCorrespondenceJacProximity(correspondence, depth0, camera, relativePose, parameters.avgDepth, pixel1JacProximity);
+            findCorrespondenceJacProximity(correspondence, depth0(x,y), camera, relativePose, parameters.avgDepth, pixel1JacProximity);
             const ImageGradT gradient = gradient1.template getBilinear<ImageGradT>(correspondence.pixel1);
             const Scalar errorJacProximity = -(gradient*pixel1JacProximity)(0,0);
 
             // Calculate the uncertainty of the photometric error
-            const Scalar sigmaW = denseSFMUncertaintyWeight(uncertainty0, errorJacProximity);
+            const Scalar sigmaW = denseSFMUncertaintyWeight(uncertainty0(x,y), errorJacProximity);
 
             // Determine the total pixel weighting based on huber weight and uncertainty
             const Scalar totalWeight = huberW*sigmaW;
@@ -102,7 +101,7 @@ namespace msc
             typename ReductionItem=msc::JTJJrReductionItem<Scalar, 2*SE3T::DoF+CS>>
     EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     void denseSFM(std::size_t x,
-                  std::size_t z,
+                  std::size_t y,
                   const SE3T& pose10,
                   const RelPoseJacobian& relPose10JacPose0,
                   const RelPoseJacobian& relPose10JacPose1,
@@ -137,8 +136,8 @@ namespace msc
 
             // Jacobians w.r.t. pose 1 and 0
             const ImageGradT gradient = gradient1.template getBilinear<ImageGradT>(correspondence.pixel1);
-            J.template block<1,6>(0,0) = -grad*correspondenceJacPose10*relPose10JacPose0;
-            j.template block<1,6>(0,6) = -grad*correspondenceJacPose10*relPose10JacPose1;
+            J.template block<1,6>(0,0) = -gradient*correspondenceJacPose10*relPose10JacPose0;
+            J.template block<1,6>(0,6) = -gradient*correspondenceJacPose10*relPose10JacPose1;
 
             // Jacobian w.r.t depth( Proximity)
             Eigen::Matrix<Scalar,2,1> pixel1JacProximity;
@@ -155,7 +154,7 @@ namespace msc
             const Scalar huberW = denseSFMRobustLoss(diff, parameters.huberDelta);
 
             // Calculate uncertainty of photometric error
-            const Scalar sigmaW = denseSFMUncertaintyWeight(uncertainty0, errorJacProximity);
+            const Scalar sigmaW = denseSFMUncertaintyWeight(uncertainty0(x,y), errorJacProximity);
 
             // Determine the total pixel weighting based on huber weight and uncertainty
             const Scalar totalWeight = huberW*sigmaW;
@@ -168,7 +167,7 @@ namespace msc
             result.inliers += 1;
             result.residual += diff*diff;
             result.Jtr += J.transpose()*diff;
-            results.JtJ += typename ReductionItem::HessianType(J.transpose());
+            result.JtJ += typename ReductionItem::HessianT(J.transpose());
         }
     }
 
