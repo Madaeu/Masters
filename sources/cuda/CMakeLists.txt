@@ -14,6 +14,9 @@ set(CMAKE_CUDA_FLAGS "${_TMP_STR}")
 
 set(cuda_sources
         cuda_image_proc.cpp
+        cuda_SE3_aligner.cpp
+        cuda_SFM_aligner.cpp
+        cuda_depth_aligner.cpp
         cuda_context.cpp)
 
 set(cuda_headers
@@ -21,8 +24,12 @@ set(cuda_headers
         cuda_context.h
         kernel_utilities.h
         launch_utilities.h
-        cuda_image_proc.h
-        reduction_items.h)
+        reduction_items.h
+        synced_pyramid.h
+        cuda_SE3_aligner.h
+        cuda_SFM_aligner.h
+        cuda_depth_aligner.h
+        cuda_image_proc.h)
 
 set_source_files_properties(${cuda_sources} PROPERTIES LANGUAGE CUDA)
 

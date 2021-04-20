@@ -35,8 +35,8 @@ namespace msc
                                                const Sophus::SE3<Scalar>& cameraPose,
                                                int border = 1, Scalar minDepth = 0, bool checkBounds = true)
     {
-        using PixelT = Eigen::Matrix<T,2,1>;
-        using PointT = Eigen::Matrix<T,3,1>;
+        using PixelT = Eigen::Matrix<Scalar,2,1>;
+        using PointT = Eigen::Matrix<Scalar,3,1>;
 
         const PixelT pixel0(x,y);
 
@@ -48,9 +48,9 @@ namespace msc
         const Scalar transformedDepth = transformedPoint[2];
         if (transformedDepth > minDepth)
         {
-            const Pixelt pixel1 = camera.forwardProjection(transformedPoint);
+            const PixelT pixel1 = camera.forwardProjection(transformedPoint);
 
-            if (cam.isPixelValid(pixel1, border) || checkBounds)
+            if (camera.isPixelValid(pixel1, border) || checkBounds)
             {
                 correspondence.pixel0 = pixel0;
                 correspondence.pixel1 = pixel1;
@@ -64,7 +64,7 @@ namespace msc
 
     template<typename Scalar>
     EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    Eigen::Matrix<Scalar, 3, 6> findCorrespondenceJacPose(const msc::Correspondence<Scalar>& correspondence,
+    Eigen::Matrix<Scalar, 2, 6> findCorrespondenceJacPose(const msc::Correspondence<Scalar>& correspondence,
                                                      const Scalar depth,
                                                      const msc::PinholeCamera<Scalar>& camera,
                                                      const Sophus::SE3<Scalar>& cameraPose)
@@ -80,7 +80,7 @@ namespace msc
                                     const Scalar depth,
                                     const msc::PinholeCamera<Scalar>& camera,
                                     const Sophus::SE3<Scalar>& cameraPose,
-                                    Eigen::MatrixBase<Scalar, 2, 1>& jacobian)
+                                    Eigen::Matrix<Scalar, 2, 1>& jacobian)
     {
         const Eigen::Matrix<Scalar, 2, 3> pixel1JacTransformedPoint = camera.forwardProjectionJacobian(correspondence.transformedPoint);
         const Eigen::Matrix<Scalar, 3, 3> transformedPointJacPoint = transformJacobianPoint(correspondence.point, cameraPose);
