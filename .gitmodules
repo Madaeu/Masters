@@ -10,3 +10,6 @@
 [submodule "third_party/vision_core"]
 	path = third_party/vision_core
 	url = https://github.com/lukier/vision_core.git
+[submodule "third_party/gtsam"]
+	path = third_party/gtsam
+	url = https://github.com/borglab/gtsam.git

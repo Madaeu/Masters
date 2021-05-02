@@ -5,6 +5,7 @@
     <mapping directory="$PROJECT_DIR$/third_party/DBoW2" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/third_party/Sophus" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/third_party/eigen" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/third_party/gtsam" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/third_party/vision_core" vcs="Git" />
   </component>
 </project>

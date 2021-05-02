@@ -9,49 +9,51 @@
 
 #include "opencv2/opencv.hpp"
 #include "opencv2/features2d.hpp"
+namespace msc {
 
-struct Features
-{
-    enum Type {ORB};
-    using Keypoints = std::vector<cv::KeyPoint>;
+    struct Features {
+        enum Type {
+            ORB
+        };
+        using Keypoints = std::vector<cv::KeyPoint>;
 
-    Features() {}
-    Features(Type type)
-    :type(type){}
+        Features() {}
 
-    Keypoints keypoints;
-    cv::Mat descriptors;
-    Type type;
-};
+        Features(Type type)
+                : type(type) {}
 
-class FeatureDetector
-{
-public:
-    FeatureDetector() = default;
-    virtual ~FeatureDetector() = default;
+        Keypoints keypoints;
+        cv::Mat descriptors;
+        Type type;
+    };
 
-    virtual Features DetectAndCompute(const cv::Mat& image) = 0;
+    class FeatureDetector {
+    public:
+        FeatureDetector() = default;
 
-};
+        virtual ~FeatureDetector() = default;
 
-class ORBDetector: public FeatureDetector
-{
-public:
-    ORBDetector()
-    {
-        orb_ = cv::ORB::create();
-    }
+        virtual Features DetectAndCompute(const cv::Mat &image) = 0;
 
-    ~ORBDetector() override {};
+    };
 
-    Features DetectAndCompute(const cv::Mat& image) override
-    {
-        Features features{Features::ORB};
-        orb_->detectAndCompute(image, cv::Mat{}, features.keypoints, features.descriptors);
-        return features;
-    }
+    class ORBDetector : public FeatureDetector {
+    public:
+        ORBDetector() {
+            orb_ = cv::ORB::create();
+        }
 
-private:
-    cv::Ptr<cv::ORB> orb_;
-};
+        ~ORBDetector() override {};
+
+        Features DetectAndCompute(const cv::Mat &image) override {
+            Features features{Features::ORB};
+            orb_->detectAndCompute(image, cv::Mat{}, features.keypoints, features.descriptors);
+            return features;
+        }
+
+    private:
+        cv::Ptr<cv::ORB> orb_;
+    };
+
+} //namespace msc
 #endif //MASTERS_FEATURE_DETECTOR_H

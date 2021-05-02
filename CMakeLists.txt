@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10.2)
 
 project(Masters LANGUAGES CXX CUDA)
 
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -20,10 +22,13 @@ message("Compiled on: ${CMAKE_SYSTEM}")
 add_subdirectory(third_party)
 
 find_package(CUDA QUIET REQUIRED)
+find_package(Jsoncpp REQUIRED)
 find_package(Sophus QUIET REQUIRED)
 find_package(OpenCV QUIET REQUIRED)
+find_package(GTSAM QUIET REQUIRED)
 find_package(Eigen3 QUIET REQUIRED)
 find_package(Boost QUIET REQUIRED COMPONENTS filesystem)
 find_package(VisionCore QUIET REQUIRED)
+find_package(TensorFlow REQUIRED)
 
 add_subdirectory(sources)

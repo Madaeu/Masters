@@ -98,6 +98,7 @@ namespace msc
     {
         const SE3T relativePose = msc::relativePose(pose1, pose0);
 
+        int max_blocks = 1024;
         int threads = parameters_.eval_threads;
         int blocks = std::min(parameters_.step_blocks, max_blocks);
         const int smemSize = (threads / deviceInfo_.WarpSize) * sizeof(ErrorReductionItem);
@@ -133,6 +134,7 @@ namespace msc
         RelativePoseJac relativePoseJacPose1;
         const SE3T relativePose = msc::relativePose(pose1, pose0, relativePoseJacPose1, relativePoseJacPose0);
 
+        int max_blocks = 1024;
         int threads = parameters_.step_threads;
         int blocks = std::min(parameters_.step_blocks, max_blocks);
         const int smemSize = (threads / 32) * sizeof(ReductionItem);

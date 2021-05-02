@@ -4,5 +4,6 @@ set(CMAKE_PREFIX_PATH ${INSTALL_DIR})
 
 find_package(Sophus   NO_DEFAULT_PATH PATHS ${BUILD_DIR}/Sophus REQUIRED)
 find_package(VisionCore  NO_DEFAULT_PATH PATHS ${BUILD_DIR}/vision_core REQUIRED)
+find_package(GTSAM QUIET REQUIRED)
 find_package(Eigen3 QUIET REQUIRED)
 find_package(DBoW2 QUIET REQUIRED)

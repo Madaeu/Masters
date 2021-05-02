@@ -69,5 +69,5 @@ namespace msc
         currentEstimate.translation() *= translationUpdate;
         currentEstimate.so3() = Sophus::SO3<T>::exp(rotationUpdate)*currentEstimate.so3();
     }
-}
+} //namespace msc
 #endif //MASTERS_LUCAS_KANADE_DENSE_H

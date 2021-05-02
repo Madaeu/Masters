@@ -15,7 +15,7 @@ namespace msc
     public:
         using CPUBuffer = vc::RuntimeBufferPyramidManaged<Scalar, vc::TargetHost>;
         using GPUBuffer = vc::RuntimeBufferPyramidManaged<Scalar, vc::TargetDeviceCUDA>;
-        using Ptr = std::shared_ptr<SyncronizedBufferPyramid<Scalar>;
+        using Ptr = std::shared_ptr<SynchronizedBufferPyramid<Scalar>>;
 
         SynchronizedBufferPyramid() = delete;
 
