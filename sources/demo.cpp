@@ -12,6 +12,9 @@
 #include "decoder_network.h"
 #include "cuda_context.h"
 #include "photometric_factor.h"
+#include "reprojection_factor.h"
+#include "depth_prior_factor.h"
+#include "factor_graph.h"
 
 #include "VisionCore/Image/BufferOps.hpp"
 

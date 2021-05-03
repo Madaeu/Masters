@@ -10,6 +10,9 @@ set(core_headers
         gtsam/gtsam_utilities.h
         gtsam/gtsam_traits.h
         gtsam/photometric_factor.h
+        gtsam/reprojection_factor.h
+        gtsam/depth_prior_factor.h
+        gtsam/factor_graph.h
         mapping/mapper.h
         mapping/frame.h
         mapping/keyframe.h

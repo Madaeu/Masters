@@ -39,9 +39,9 @@ namespace gtsam
 
         static gtsam::Vector local(const SE3T first, const SE3T& second)
         {
-            using tangent = SE3T::Tangent;
+            typename SE3T::Tangent tangent;
             tangent.template head<3>() = second.translation() - first.translation();
-            tangent.template tail<3>() (second.so3() * first.so3().inverse()).log();
+            tangent.template tail<3>() = (second.so3() * first.so3().inverse()).log();
             return tangent.template cast<double>();
         }
 

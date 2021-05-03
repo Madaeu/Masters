@@ -55,7 +55,7 @@ namespace msc
 
         boost::shared_ptr<gtsam::GaussianFactor> linearize(const gtsam::Values& c) const override;
 
-        size_t dim() const override { return NP; }
+        std::size_t dim() const override { return NP; }
 
         virtual shared_ptr clone() const {
             return shared_ptr(new This(camera_, keyframe_, frame_, pose0Key_, pose1Key_, code0Key_, pyramidLevels_, aligner_));
