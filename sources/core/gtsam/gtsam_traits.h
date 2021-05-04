@@ -15,17 +15,17 @@ namespace gtsam
     {
         using SE3T = Sophus::SE3<Scalar>;
 
-        static size_t getDimension(const SE3T& pose)
+        static size_t GetDimension(const SE3T& pose)
         {
             return SE3T::DoF;
         }
 
-        static void print(const SE3T& pose, const std::string& string)
+        static void Print(const SE3T& pose, const std::string& string)
         {
             std::cout << string << pose.log().transpose();
         }
 
-        static SE3T retract(const SE3T& pose, const gtsam::Vector& delta)
+        static SE3T Retract(const SE3T& pose, const gtsam::Vector& delta)
         {
             Eigen::Matrix<Scalar, 6,1> update = delta.cast<Scalar>();
             Eigen::Matrix<Scalar, 3,1> translationUpdate = update.template head<3>();
@@ -37,7 +37,7 @@ namespace gtsam
             return newPose;
         }
 
-        static gtsam::Vector local(const SE3T first, const SE3T& second)
+        static gtsam::Vector Local(const SE3T first, const SE3T& second)
         {
             typename SE3T::Tangent tangent;
             tangent.template head<3>() = second.translation() - first.translation();
@@ -47,7 +47,7 @@ namespace gtsam
 
         static bool Equals(const SE3T& first, const SE3T& second, Scalar tolerance)
         {
-            return local(first, second).norm() < tolerance;
+            return Local(first, second).norm() < tolerance;
         }
     };
 

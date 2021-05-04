@@ -11,7 +11,7 @@
 
 #include "opencv2/opencv.hpp"
 #include "sophus/se3.hpp"
-#include "DBoW2.h"
+//#include "DBoW2.h"
 #include "Eigen/Dense"
 
 #include <memory>

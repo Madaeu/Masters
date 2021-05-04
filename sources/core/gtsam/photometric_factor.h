@@ -121,7 +121,7 @@ namespace msc
         {
             SE3T pose0 = c.at<SE3T>(pose0Key_);
             SE3T pose1 = c.at<SE3T>(pose1Key_);
-            CodeT code0 = c.at<SE3T>(code0Key_);
+            CodeT code0 = c.at<CodeT>(code0Key_);
 
             updateDepthMaps(code0);
 
@@ -225,15 +225,15 @@ namespace msc
 
         Eigen::Matrix<Scalar, CS, 1> code = code0.template cast<Scalar>();
 
-        vc::Image2DView<Scalar, vc::TargetDeviceCUDA> valid = keyframe_->validPyramid.getLevelGPU(i);
+        vc::Image2DView<Scalar, vc::TargetDeviceCUDA> valid = keyframe_->validPyramid_.getLevelGPU(i);
         auto result = aligner_->runStep(pose0, pose1, code, camera_,
-                                        keyframe_->imagePyramid.getLevelGPU(i),
-                                        frame_->imagePyramid.getLevelGPU(i),
-                                        keyframe_->depthPyramid.getLevelGPU(i),
-                                        keyframe_->uncertaintyPyramid.getLevelGPU(i),
+                                        keyframe_->imagePyramid_.getLevelGPU(i),
+                                        frame_->imagePyramid_.getLevelGPU(i),
+                                        keyframe_->depthPyramid_.getLevelGPU(i),
+                                        keyframe_->uncertaintyPyramid_.getLevelGPU(i),
                                         valid,
-                                        keyframe_->jacobianPyramid.getLevelGPU(i),
-                                        frame_->gradientPyramid.getLevelGPU(i));
+                                        keyframe_->jacobianPyramid_.getLevelGPU(i),
+                                        frame_->gradientPyramid_.getLevelGPU(i));
 
         if (result.inliers > 0 )
         {
@@ -254,11 +254,11 @@ namespace msc
         int i = pyramidLevels_;
 
         auto result = aligner_->evaluateError(pose0, pose1, camera_,
-                                              keyframe_->imagePyramid.getLevelGPU(i),
-                                              frame_->imagePyramid.getLevelGPU(i),
-                                              keyframe_->depthPyramid.getLevelGPU(i),
-                                              keyframe_->uncertaintyPyramid.getLevelGPU(i),
-                                              frame_->gradientPyramid.getLevelGPU(i));
+                                              keyframe_->imagePyramid_.getLevelGPU(i),
+                                              frame_->imagePyramid_.getLevelGPU(i),
+                                              keyframe_->depthPyramid_.getLevelGPU(i),
+                                              keyframe_->uncertaintyPyramid_.getLevelGPU(i),
+                                              frame_->gradientPyramid_.getLevelGPU(i));
         if(result.inliers > 0)
         {
             result.residual = result.residual / result.inliers * camera_.width() * camera_.height();
@@ -275,10 +275,10 @@ namespace msc
     {
         int i = pyramidLevels_;
         Eigen::Matrix<Scalar, CS, 1> code0 = initialCode.template cast<Scalar>();
-        msc::updateDepth(code0, keyframe_->proximityPyramid.getLevelGPU(i),
-                         keyframe_->jacobianPyramid.getLevelGPU(i),
+        msc::updateDepth(code0, keyframe_->proximityPyramid_.getLevelGPU(i),
+                         keyframe_->jacobianPyramid_.getLevelGPU(i),
                          2.0f, //average depth
-                         keyframe_->depthPyramid.getLevelGPU(i) );
+                         keyframe_->depthPyramid_.getLevelGPU(i) );
     }
 
 } // namespace msc

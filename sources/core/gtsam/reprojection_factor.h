@@ -100,8 +100,7 @@ namespace msc
     };
 
     template<typename Scalar, int CS>
-    ReprojectionFactor<Scalar, CS>::ReprojectionFactor(
-            const msc::PinholeCamera<Scalar> &camera, const KeyframePtr &keyframe, const FramePtr &frame,
+    ReprojectionFactor<Scalar, CS>::ReprojectionFactor(const msc::PinholeCamera<Scalar> &camera, const KeyframePtr &keyframe, const FramePtr &frame,
             const gtsam::Key &pose0Key, const gtsam::Key &pose1Key, const gtsam::Key &code0Key,
             const Scalar maxFeatureDistance, const Scalar huberDelta, const Scalar sigma, const int maxIterations,
             const Scalar threshold)
@@ -126,8 +125,7 @@ namespace msc
     }
 
     template<typename Scalar, int CS>
-    ReprojectionFactor<Scalar, CS>::ReprojectionFactor(
-            const msc::PinholeCamera<Scalar> &camera, const std::vector<cv::DMatch> &matches,
+    ReprojectionFactor<Scalar, CS>::ReprojectionFactor(const msc::PinholeCamera<Scalar> &camera, const std::vector<cv::DMatch> &matches,
             const KeyframePtr &keyframe, const FramePtr &frame, const gtsam::Key &pose0Key, const gtsam::Key &pose1Key,
             const gtsam::Key &code0Key, const Scalar huberDelta, const Scalar sigma)
             : Base(gtsam::cref_list_of<3>(pose0Key)(pose1Key)(code0Key)),
@@ -135,9 +133,9 @@ namespace msc
               pose1Key_(pose1Key),
               camera_(camera),
               matches_(matches),
+              huberDelta_(huberDelta),
               keyframe_(keyframe),
               frame_(frame),
-              huberDelta_(huberDelta),
               sigma_(sigma) { }
 
     template<typename Scalar, int CS>
@@ -162,10 +160,10 @@ namespace msc
 
                 SE3T pose10 = msc::relativePose(pose0, pose1);
 
-                auto proximity0JacobianImage =keyframe_->jacobianPyramid.getLevelCPU(0);
+                auto proximity0JacobianImage =keyframe_->jacobianPyramid_.getLevelCPU(0);
                 Eigen::Map<Eigen::Matrix<Scalar, 1, CS>> temp(&proximity0JacobianImage((int)query.x*CS, (int)query.y));
                 Eigen::Matrix<Scalar, 1, CS> proximityJacobianCode(temp);
-                Scalar proximity0Code = keyframe_->proximityPyramid.getLevelCPU(0)(query.x, query.y);
+                Scalar proximity0Code = keyframe_->proximityPyramid_.getLevelCPU(0)(query.x, query.y);
 
                 Scalar depth0 = msc::depthFromCode(code0, proximityJacobianCode, proximity0Code, avgDepth);
                 msc::Correspondence<Scalar> correspondence = msc::findCorrespondence(query.x, query.y, depth0, camera_, pose10, 1.0f, 0.0f, false);
@@ -214,7 +212,7 @@ namespace msc
         for (unsigned int i = 0; i < matches_.size(); ++i)
         {
             cv::Point2f query = keyframe_->features_.keypoints[matches_[i].queryIdx].pt;
-            cv::Point2f train = frame_->features.keypoints[matches_[i].trainIdx].pt;
+            cv::Point2f train = frame_->features_.keypoints[matches_[i].trainIdx].pt;
             Eigen::Matrix<Scalar, 2, 1> pixel1(query.x, query.y);
             Eigen::Matrix<Scalar, 2, 1> pixel0(train.x, train.y);
 
@@ -222,9 +220,9 @@ namespace msc
             Eigen::Matrix<Scalar, 6, 6> pose10JacobianPose1;
             SE3T pose10 = msc::relativePose(pose1, pose0, pose10JacobianPose1, pose10JacobianPose0);
 
-            auto proximityJacobianImage = keyframe_->jacobianPyramid.getLevelCPU(0);
+            auto proximityJacobianImage = keyframe_->jacobianPyramid_.getLevelCPU(0);
             Eigen::Map<Eigen::Matrix<Scalar, 1, CS>> proximityJacobianCode(&proximityJacobianImage((int)query.x * CS, (int)query.y));
-            Scalar proximity0Code = keyframe_->proximityPyramid.getLevelCPU(0)(query.x, query.y);
+            Scalar proximity0Code = keyframe_->proximityPyramid_.getLevelCPU(0)(query.x, query.y);
 
             Scalar depth0 = msc::depthFromCode(code0, proximityJacobianCode, proximity0Code, avgDepth);
             msc::Correspondence<Scalar> correspondence = msc::findCorrespondence(query.x, query.y, depth0, camera_, pose10, 1.0f, 0.0f, false);

@@ -15,6 +15,9 @@
 #include "reprojection_factor.h"
 #include "depth_prior_factor.h"
 #include "factor_graph.h"
+#include "work_implementation.h"
+#include "work_manager.h"
+#include "mapper.h"
 
 #include "VisionCore/Image/BufferOps.hpp"
 

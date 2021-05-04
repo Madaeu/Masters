@@ -46,17 +46,17 @@ namespace msc
             Ptr addChild(Ptr child);
             Ptr removeChild();
 
-            std::string id() const {return id; }
+            std::string id() const {return id_; }
         private:
             Ptr child_;
             std::string id_;
 
-            static int nextId_
+            static int nextId_;
         };
 
         Work::Work()
         {
-            id = "[" + std::to_string(nextId_++) + "]";
+            id_ = "[" + std::to_string(nextId_++) + "]";
         }
 
         int Work::nextId_ = 0;

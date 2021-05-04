@@ -1,7 +1,6 @@
-#find_package(OpenCV)
-
 set(core_sources
-        network/decoder_network.cpp)
+        network/decoder_network.cpp
+        mapping/work_implementation.cpp)
 
 set(core_headers
         vision/camera_tracker.h
@@ -18,25 +17,29 @@ set(core_headers
         mapping/keyframe.h
         mapping/keyframe_map.h
         mapping/work.h
+        mapping/work_implementation.h
+        mapping/work_manager.h
         network/tfwrap.h
         network/decoder_network.h
         slam_system.h)
 
-#add_library(core SHARED ${core_sources} ${core_headers})
 add_library(msc_core SHARED ${core_sources} ${core_headers})
 
-target_include_directories(msc_core INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}
+target_include_directories(msc_core PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/vision
         ${CMAKE_CURRENT_SOURCE_DIR}/features
         ${CMAKE_CURRENT_SOURCE_DIR}/mapping
         ${CMAKE_CURRENT_SOURCE_DIR}/network
-        ${CMAKE_CURRENT_SOURCE_DIR}/gtsam)
+        ${CMAKE_CURRENT_SOURCE_DIR}/gtsam
+        ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(msc_core PUBLIC
+target_link_libraries(msc_core
+        PUBLIC
         msc_common
         msc_cuda
+        Eigen3::Eigen
         VisionCore
-        TensorFlow
         gtsam
+        PRIVATE
+        TensorFlow
         jsoncpp)
