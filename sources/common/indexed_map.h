@@ -26,7 +26,7 @@ namespace msc {
         }
 
         virtual bool exists(const IdType &id) const {
-            return map_.template find(id) != map_.end();
+            return map_.find(id) != map_.end();
         }
 
         virtual IdType add(const Item &item) {

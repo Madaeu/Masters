@@ -222,7 +222,7 @@ namespace msc
     {
         std::vector<FrameId> nonMarginalizedFrames;
         for(auto& id : map_->frames_.ids()) {
-            if (!map_->frames_.get(id)->marginalized) {
+            if (!map_->frames_.get(id)->marginalized_) {
                 nonMarginalizedFrames.push_back(id);
             }
         }
@@ -259,7 +259,7 @@ namespace msc
         workManager_.addWork<work::InitVariables<Scalar,CS>>(frame);
         workManager_.addWork<work::OptimizePhotometric<Scalar,CS>>(keyframe, frame,
                                                                    options_.photometricIterations,
-                                                                   cameraPyramid_, se3Aligner_);
+                                                                   cameraPyramid_, sfmAligner_);
 
         map_->frames_.addLink(frame->id_, keyframeId);
     }
@@ -270,7 +270,7 @@ namespace msc
                                         const SE3T &initialPose, const Features &features)
     {
         auto connections = buildBackConnections();
-        return enqueueKeyframe(timestamp, image, imageColor, initialPose, connections);
+        return enqueueKeyframe(timestamp, image, imageColor, initialPose, features, connections);
     }
 
     template<typename Scalar, int CS>
@@ -294,10 +294,10 @@ namespace msc
             {
                 workManager_.addWork<work::OptimizePhotometric<Scalar,CS>>(keyframe, backKeyframe,
                                                                            options_.photometricIterations,
-                                                                           cameraPyramid_, se3Aligner_);
+                                                                           cameraPyramid_, sfmAligner_);
                 ptr = workManager_.addWork<work::OptimizePhotometric<Scalar, CS>>(backKeyframe, keyframe,
                                                                                   options_.photometricIterations,
-                                                                                  cameraPyramid_, se3Aligner_, true);
+                                                                                  cameraPyramid_, sfmAligner_, true);
             }
 
             if (options_.useReprojection)
@@ -344,11 +344,11 @@ namespace msc
         {
             workManager_.addWork<work::OptimizePhotometric<Scalar,CS>>(keyframe0, keyframe1,
                                                                        options_.photometricIterations,
-                                                                       cameraPyramid_, se3Aligner_);
+                                                                       cameraPyramid_, sfmAligner_);
 
             ptr = workManager_.addWork<work::OptimizePhotometric<Scalar,CS>>(keyframe1, keyframe0,
                                                                              options_.photometricIterations,
-                                                                             cameraPyramid_, se3Aligner_, true);
+                                                                             cameraPyramid_, sfmAligner_, true);
         }
 
         if (reprojection)
@@ -515,7 +515,7 @@ namespace msc
         {
             auto keyframe = map_->keyframes_.get(id);
             keyframe->code_ = values.at(codeKey(id)).template cast<gtsam::Vector>().template cast<float>();
-            keyframe->pose = values.at(poseKey(id)).template cast<Sophus::SE3f>();
+            keyframe->pose_ = values.at(poseKey(id)).template cast<Sophus::SE3f>();
 
             Eigen::Matrix<float, CS, 1> code = keyframe->code_;
             for (uint i = 0; i < keyframe->imagePyramid_.levels(); ++i)
@@ -528,7 +528,7 @@ namespace msc
         }
         for (const auto& id : map_->frames_.ids())
         {
-            auto frame = map_->frames.get(id);
+            auto frame = map_->frames_.get(id);
             if( !frame->marginalized_)
             {
                 frame->pose_ = values.at(auxPoseKey(id)).template cast<Sophus::SE3f>();
@@ -543,7 +543,7 @@ namespace msc
     Mapper<Scalar,CS>::buildFrame(const cv::Mat &image, const cv::Mat &colorImage, const SE3T &initialPose,
                                   const Features &features)
     {
-        auto frame = std::make_shared<Frame>(cameraPyramid_.levels(), cameraPyramid_[0].width(),
+        auto frame = std::make_shared<Frame<Scalar>>(cameraPyramid_.levels(), cameraPyramid_[0].width(),
                                              cameraPyramid_[0].height());
         frame->pose_ = initialPose;
         frame->colorImage_ = colorImage.clone();
@@ -559,8 +559,9 @@ namespace msc
                                       const SE3T &initialPose, const Features &features)
     {
         auto keyframe = std::make_shared<Keyframe<float>>(cameraPyramid_.levels(),
-                                                         cameraPyramid_[0].width(),
-                                                         cameraPyramid_[0].height());
+                                                          cameraPyramid_[0].width(),
+                                                          cameraPyramid_[0].height(),
+                                                          CS);
         keyframe->pose_ = initialPose;
         keyframe->colorImage_ = colorImage.clone();
         keyframe->timestamp_ = timestamp;

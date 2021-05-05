@@ -11,7 +11,7 @@
 
 #include "opencv2/opencv.hpp"
 #include "sophus/se3.hpp"
-//#include "DBoW2.h"
+#include "DBoW2/DBoW2.h"
 #include "Eigen/Dense"
 
 #include <memory>
@@ -44,7 +44,7 @@ namespace msc {
         id_(other.id_),
         features_(other.features_),
         timestamp_(other.timestamp_),
-        //bagOfWordVector_(other.bagOfWordVector_),
+        bagOfWordVector_(other.bagOfWordVector_),
         hasKeypoints_(other.hasKeypoints_),
         marginalized_(other.marginalized_)
         {
@@ -92,7 +92,7 @@ namespace msc {
 
         double timestamp_;
 
-        //DBoW2::BowVector bagOfWordVector_;
+        DBoW2::BowVector bagOfWordVector_;
 
         bool hasKeypoints_{false};
         bool marginalized_{false};

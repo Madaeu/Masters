@@ -128,7 +128,7 @@ namespace msc
                 std::cout << "CPU and GPU are not synchronized! \n";
         }
 
-        void synchronizeCPU()
+        void synchronizeCPU() const
         {
             if(!cpuBuffer_)
             {
@@ -145,7 +145,7 @@ namespace msc
             gpuModified_ = false;
         }
 
-        void synchronizeGPU()
+        void synchronizeGPU() const
         {
             if(!gpuBuffer_)
             {

@@ -188,7 +188,7 @@ namespace msc
                                                             FramePtr frame,
                                                             IteratorList iterators,
                                                             CameraPyramidT cameraPyramid,
-                                                            AlignerPtr aligner,
+                                                            std::shared_ptr<msc::SE3Aligner<float>> aligner,
                                                             bool updateValid,
                                                             bool removeAfter)
         : OptimizeWork<Scalar>(iterators, removeAfter), keyframe_(keyframe),

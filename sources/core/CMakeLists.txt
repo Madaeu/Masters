@@ -1,9 +1,11 @@
 set(core_sources
         network/decoder_network.cpp
-        mapping/work_implementation.cpp)
+        mapping/work_implementation.cpp
+        slam_system.cpp)
 
 set(core_headers
         vision/camera_tracker.h
+        vision/loop_detector.h
         features/feature_detector.h
         gtsam/uniform_sampler.h
         gtsam/gtsam_utilities.h
@@ -21,6 +23,7 @@ set(core_headers
         mapping/work_manager.h
         network/tfwrap.h
         network/decoder_network.h
+        slam_system_options.h
         slam_system.h)
 
 add_library(msc_core SHARED ${core_sources} ${core_headers})
@@ -40,6 +43,7 @@ target_link_libraries(msc_core
         Eigen3::Eigen
         VisionCore
         gtsam
+        DBOW2
         PRIVATE
         TensorFlow
         jsoncpp)

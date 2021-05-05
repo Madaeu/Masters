@@ -21,6 +21,7 @@ namespace msc
     template <typename T>
     class CameraTracker
     {
+    public:
         using GradT = Eigen::Matrix<T, 1,2>;
         using KeyframeT = Keyframe<T>;
         using ImageBufferPyramid = vc::RuntimeBufferPyramidManaged<T, vc::TargetDeviceCUDA>;
@@ -46,6 +47,8 @@ namespace msc
         void setPose(const SE3T& poseWorldCoords);
         void setConfiguration( const TrackerConfig& newConfiguration);
 
+        T getInliers() { return inliers_; }
+        T getError() { return error_; }
         SE3T getPoseEstimate();
 
     private:
@@ -82,7 +85,7 @@ namespace msc
                 auto result = se3Aligner_.runStep(poseCurrentKeyframe_, cameraPyramid_[level],
                                                   keyframe_->imagePyramid_.getLevelGPU(level),
                                                   imagePyramid[level],
-                                                  keyframe_.depthPyramid_.getLevelGPU(level),
+                                                  keyframe_->depthPyramid_.getLevelGPU(level),
                                                   gradientPyramid[level]);
                 Eigen::Matrix<T, 6,1> update = -result.JtJ.toDenseMatrix().ldlt().solve(result.Jtr);
                 Eigen::Matrix<T, 3,1> translationUpdate = update.template head<3>();
@@ -103,9 +106,9 @@ namespace msc
         vc::Image2DManaged<T, vc::TargetHost> warpedHost(warpedDevice.width(), warpedDevice.height());
         vc::Image2DManaged<T, vc::TargetHost> keyframeImageHost(warpedDevice.width(), warpedDevice.height());
         se3Aligner_.warp(poseCurrentKeyframe_, cameraPyramid_[level], keyframe_->imagePyramid_.getLevelGPU(level),
-                         imagePyramid[level], keyframe_->depthPyramid.getLevelGPU(level), warpedDevice);
+                         imagePyramid[level], keyframe_->depthPyramid_.getLevelGPU(level), warpedDevice);
         warpedHost.copyFrom(warpedDevice);
-        keyframeImageHost.copyFrom(keyframe_->imagePyramid.getLevelGPU(level));
+        keyframeImageHost.copyFrom(keyframe_->imagePyramid_.getLevelGPU(level));
         cv::Mat absDiff = cv::abs(warpedHost.getOpenCV() - keyframeImageHost.getOpenCV());
         residualImage_ = absDiff.clone();
     }
