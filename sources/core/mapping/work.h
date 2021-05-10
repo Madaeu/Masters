@@ -24,7 +24,7 @@ namespace msc
 
             Work();
 
-            virtual ~Work() = default;
+            virtual ~Work();
 
             virtual void bookkeeping(gtsam::NonlinearFactorGraph& newFactors,
                                      gtsam::FastVector<size_t>& removeIndices,
@@ -46,33 +46,13 @@ namespace msc
             Ptr addChild(Ptr child);
             Ptr removeChild();
 
-            std::string id() const {return id_; }
+            std::string id() const { return id_; }
         private:
             Ptr child_;
             std::string id_;
 
             static int nextId_;
         };
-
-        Work::Work()
-        {
-            id_ = "[" + std::to_string(nextId_++) + "]";
-        }
-
-        int Work::nextId_ = 0;
-
-        Work::Ptr Work::addChild(Ptr child)
-        {
-            child_ = child;
-            return child;
-        }
-
-        Work::Ptr Work::removeChild()
-        {
-            auto child = child_;
-            child_.reset();
-            return child;
-        }
 
     } // namespace work
 } //namespace msc

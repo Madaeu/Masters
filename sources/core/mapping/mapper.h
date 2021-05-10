@@ -610,12 +610,26 @@ namespace msc
 
         for( uint i = 0; i < cameraPyramid_.levels(); ++i)
         {
-            updateDepth((Eigen::Matrix<Scalar, CS, 1>)keyframe->code_,
-                        keyframe->proximityPyramid_.getLevelGPU(i),
-                        keyframe->jacobianPyramid_.getLevelGPU(i),
-                        options_.SFMParameters.avgDepth,
-                        keyframe->depthPyramid_.getLevelGPU(i));
+            msc::updateDepth((Eigen::Matrix<Scalar, CS, 1>)keyframe->code_,
+                            keyframe->proximityPyramid_.getLevelGPU(i),
+                            keyframe->jacobianPyramid_.getLevelGPU(i),
+                            options_.SFMParameters.avgDepth,
+                            keyframe->depthPyramid_.getLevelGPU(i));
         }
+
+        /*
+        cv::Mat proxImage(keyframe->proximityPyramid_.getLevelCPU(0).height(), keyframe->proximityPyramid_.getLevelCPU(0).width(), CV_32FC1, keyframe->proximityPyramid_.getLevelCPU(0).rawPtr());
+        cv::imshow("proximity", proxImage);
+        cv::waitKey();
+        */
+
+        /*
+        cv::Mat depthImage(keyframe->depthPyramid_.getLevelCPU(0).height(), keyframe->depthPyramid_.getLevelCPU(0).width(), CV_32FC1, keyframe->depthPyramid_.getLevelCPU(0).rawPtr());
+        cv::normalize(depthImage, depthImage, 0, 1, cv::NORM_MINMAX, CV_32F);
+        cv::imshow("depth", depthImage);
+        cv::waitKey();
+         */
+
 
         // TODO: Add Geometric Factor
 

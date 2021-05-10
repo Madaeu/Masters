@@ -182,7 +182,7 @@ namespace msc
     Eigen::Matrix<T, 3, 6> transformJacobianPose(const Eigen::Matrix<T,3,1>& pt, const Sophus::SE3<T>& pose){
         Eigen::Matrix<T,3,6> dXdt;
         dXdt.template block<3,3>(0,0) = Eigen::Matrix<T,3,3>::Identity();
-        dXdt.template block<3,3>(3,0) = -Sophus::SO3<T>::hat(pose.so3()*pt);
+        dXdt.template block<3,3>(0,3) = -Sophus::SO3<T>::hat(pose.so3()*pt);
         return dXdt;
     }
 

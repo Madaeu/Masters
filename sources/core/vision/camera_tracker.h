@@ -47,13 +47,13 @@ namespace msc
         void setPose(const SE3T& poseWorldCoords);
         void setConfiguration( const TrackerConfig& newConfiguration);
 
-        T getInliers() { return inliers_; }
-        T getError() { return error_; }
+        float getInliers() { return inliers_; }
+        float getError() { return error_; }
         SE3T getPoseEstimate();
 
     private:
-        T inliers_;
-        T error_;
+        float inliers_;
+        float error_;
         SE3T poseCurrentKeyframe_;
         TrackerConfig configuration_;
         CameraPyramid<T> cameraPyramid_;
@@ -78,6 +78,7 @@ namespace msc
             throw std::runtime_error("Calling CameraTracker::trackFrame before a keyframe is set!");
         }
 
+
         for (int level = configuration_.pyramidLevels-1; level >= 0; --level)
         {
             for( int iterations = 0; iterations < configuration_.iterationsPerLevel[level]; ++iterations)
@@ -87,15 +88,18 @@ namespace msc
                                                   imagePyramid[level],
                                                   keyframe_->depthPyramid_.getLevelGPU(level),
                                                   gradientPyramid[level]);
-                Eigen::Matrix<T, 6,1> update = -result.JtJ.toDenseMatrix().ldlt().solve(result.Jtr);
-                Eigen::Matrix<T, 3,1> translationUpdate = update.template head<3>();
-                Eigen::Matrix<T, 3,1> rotationUpdate = update.template tail<3>();
+                //std::cout << "JtJ: \n" << result.JtJ << "\n";
+                //std::cout << "Jtr: \n" << result.Jtr << "\n";
+                Eigen::Matrix<float, 6,1> update = -result.JtJ.toDenseMatrix().ldlt().solve(result.Jtr);
+                Eigen::Matrix<float, 3,1> translationUpdate = update.head<3>();
+                Eigen::Matrix<float, 3,1> rotationUpdate = update.tail<3>();
+
                 poseCurrentKeyframe_.translation() += translationUpdate;
-                poseCurrentKeyframe_.so3() = Sophus::SO3<T>::exp(rotationUpdate) * poseCurrentKeyframe_.so3();
+                poseCurrentKeyframe_.so3() = Sophus::SO3<float>::exp(rotationUpdate) * poseCurrentKeyframe_.so3();
 
                 if ( level == 0 && iterations == configuration_.iterationsPerLevel[level]-1)
                 {
-                    inliers_ = result.inliers / T(imagePyramid[level].area());
+                    inliers_ = result.inliers / (float)imagePyramid[level].area();
                     error_ = result.inliers != 0 ? result.residual / result.inliers : std::numeric_limits<T>::infinity();
                 }
             }

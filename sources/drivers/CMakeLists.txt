@@ -1,10 +1,12 @@
 set(driver_sources
         dataset/kitti_interface.cpp
+        dataset/scannet_interface.cpp
         camera_interface_factory.cpp)
 
 set(driver_headers
         dataset/dataset_interface.h
         dataset/kitti_interface.h
+        dataset/scannet_interface.h
         camera_interface.h
         camera_interface_factory.h)
 

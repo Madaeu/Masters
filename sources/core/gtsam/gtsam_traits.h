@@ -33,11 +33,11 @@ namespace gtsam
 
             SE3T newPose;
             newPose.translation() = pose.translation() + translationUpdate;
-            newPose.so3() = SE3T::SO3Type ::exp(rotationUpdate)*pose.so3();
+            newPose.so3() = SE3T::SO3Type::exp(rotationUpdate)*pose.so3();
             return newPose;
         }
 
-        static gtsam::Vector Local(const SE3T first, const SE3T& second)
+        static gtsam::Vector Local(const SE3T& first, const SE3T& second)
         {
             typename SE3T::Tangent tangent;
             tangent.template head<3>() = second.translation() - first.translation();

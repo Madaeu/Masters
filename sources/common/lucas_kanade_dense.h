@@ -33,13 +33,13 @@ namespace msc
     {
         ReductionItem result;
         const Correspondence<Scalar> correspondence=msc::findCorrespondence(x,y,depth0(x,y), camera, pose);
+        //printf(correspondence.valid ? "true" : "false");
         if(correspondence.valid)
         {
             // Determine the Jacobian
-            const Eigen::Matrix<Scalar,2,6> correspondenceJac = msc::findCorrespondenceJacPose(correspondence, depth0(x,y), camera, pose);
+            const Eigen::Matrix<Scalar,2,6> correspondenceJac = msc::findCorrespondenceJacPose<Scalar>(correspondence, depth0(x,y), camera, pose);
             const Eigen::Matrix<Scalar,1,2> gradient = gradient1.template getBilinear<Eigen::Matrix<Scalar,1,2>>(correspondence.pixel1);
             Eigen::Matrix<Scalar,1,6> jacobian = -gradient*correspondenceJac;
-
             // Calculate the photometric error
             Scalar diff = static_cast<Scalar>(image0(x,y))-image1.template getBilinear<Scalar>(correspondence.pixel1);
 

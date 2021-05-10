@@ -1,5 +1,6 @@
 set(core_sources
         network/decoder_network.cpp
+        mapping/work.cpp
         mapping/work_implementation.cpp
         slam_system.cpp)
 
@@ -43,7 +44,7 @@ target_link_libraries(msc_core
         Eigen3::Eigen
         VisionCore
         gtsam
-        DBOW2
+        DBoW2
         PRIVATE
         TensorFlow
         jsoncpp)

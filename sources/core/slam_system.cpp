@@ -127,10 +127,14 @@ namespace msc
         SE3T newPose = trackingLost_ ? relocalize() : trackFrame();
 
         trackingLost_ = checkTrackingLost(newPose);
-        if(trackingLost_)
-            return;
 
-        currentPose_ = newPose;
+        std::cout << (trackingLost_ ? "Lost \n" : "Tracking \n");
+        if(trackingLost_)
+        {
+            return;
+        }
+
+
         notifyPoseObservers();
 
         if (options_.loopClosure)

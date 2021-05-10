@@ -237,12 +237,12 @@ void sobelGradients(const vc::Buffer2DView<T, vc::TargetDeviceCUDA>& input,
     {
         vc::runReductions(depth.area(), [&] __device__ (unsigned int i)
         {
-           const unsigned int y = i / depth.width();
-           const unsigned int x = i - ( y * depth.width());
+            const unsigned int y = i / depth.width();
+            const unsigned int x = i - ( y * depth.width());
 
-           Eigen::Map<const Eigen::Matrix<Scalar, 1, CS>> temp(&proximityJacobian(x*CS, y));
-           const Eigen::Matrix<Scalar, 1, CS> proximityJacCode(temp);
-           depth(x,y) = msc::depthFromCode(code, proximityJacCode, originalProximity(x,y), avgDepth);
+            Eigen::Map<const Eigen::Matrix<Scalar, 1, CS>> temp(&proximityJacobian(x*CS, y));
+            const Eigen::Matrix<Scalar, 1, CS> proximityJacCode(temp);
+            depth(x,y) = msc::depthFromCode(code, proximityJacCode, originalProximity(x,y), avgDepth);
         });
     }
 

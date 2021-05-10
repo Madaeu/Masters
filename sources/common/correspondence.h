@@ -50,7 +50,7 @@ namespace msc
         {
             const PixelT pixel1 = camera.forwardProjection(transformedPoint);
 
-            if (camera.isPixelValid(pixel1, border) || checkBounds)
+            if (camera.isPixelValid(pixel1, border) || !checkBounds)
             {
                 correspondence.pixel0 = pixel0;
                 correspondence.pixel1 = pixel1;
@@ -63,15 +63,15 @@ namespace msc
     }
 
     template<typename Scalar>
-    EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+    EIGEN_DEVICE_FUNC //EIGEN_STRONG_INLINE
     Eigen::Matrix<Scalar, 2, 6> findCorrespondenceJacPose(const msc::Correspondence<Scalar>& correspondence,
                                                      const Scalar depth,
                                                      const msc::PinholeCamera<Scalar>& camera,
                                                      const Sophus::SE3<Scalar>& cameraPose)
     {
-        const Eigen::Matrix<Scalar, 3,6> dXdt = transformJacobianPose(correspondence.point, cameraPose);
-        const Eigen::Matrix<Scalar,2,3> dCamera = camera.forwardProjectionJacobian(correspondence.transformedPoint);
-        return dCamera*dXdt;
+        const Eigen::Matrix<Scalar,3,6> dXdT = transformJacobianPose<Scalar>(correspondence.point, cameraPose);
+        const Eigen::Matrix<Scalar,2,3> dCam = camera.forwardProjectionJacobian(correspondence.transformedPoint);
+        return dCam * dXdT;
     }
 
     template<typename Scalar>

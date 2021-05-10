@@ -221,7 +221,7 @@ namespace msc
         configuration.pyramidLevels = root["pyramid_levels"].asUInt();
         configuration.codeSize = root["code_size"].asUInt();
         configuration.grayscale = root["grayscale"].asBool();
-        configuration.avgDepth = root["avg_depth"].asDouble();
+        configuration.avgDepth = root["avg_dpt"].asDouble();
         const auto& inputNames = root["input_names"];
         auto cut_after_colon = [] (const std::string& str) -> std::string {
             return str.substr(0, str.find_last_of(":"));

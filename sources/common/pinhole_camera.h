@@ -84,7 +84,8 @@ namespace msc {
          * @param border
          * @return
          */
-        inline EIGEN_DEVICE_FUNC bool isPixelValid(Scalar x, Scalar y, std::size_t border = 0) const;
+         template <typename T = Scalar>
+        inline EIGEN_DEVICE_FUNC bool isPixelValid(T x, T y, std::size_t border = 0) const;
 
         /**
          * Validate that pixel is within camera's image plane
@@ -101,7 +102,7 @@ namespace msc {
          * @param new_height
          */
         template<typename T>
-        inline void resizeViewport(const T &new_width, const T &new_height);
+        inline EIGEN_DEVICE_FUNC void resizeViewport(const T &new_width, const T &new_height);
 
         template<typename T>
         inline Eigen::Matrix<T, 3, 3> Matrix() const;
@@ -112,17 +113,17 @@ namespace msc {
         template<typename T>
         inline PinholeCamera<T> Cast() const;
 
-        inline const Scalar &fx() const { return fx_; }
+        inline EIGEN_DEVICE_FUNC const Scalar &fx() const { return fx_; }
 
-        inline const Scalar &fy() const { return fy_; }
+        inline EIGEN_DEVICE_FUNC const Scalar &fy() const { return fy_; }
 
-        inline const Scalar &u0() const { return u0_; }
+        inline EIGEN_DEVICE_FUNC const Scalar &u0() const { return u0_; }
 
-        inline const Scalar &v0() const { return v0_; }
+        inline EIGEN_DEVICE_FUNC const Scalar &v0() const { return v0_; }
 
-        inline const Scalar &width() const { return width_; }
+        inline EIGEN_DEVICE_FUNC const Scalar &width() const { return width_; }
 
-        inline const Scalar &height() const { return height_; }
+        inline EIGEN_DEVICE_FUNC const Scalar &height() const { return height_; }
 
 
     private:
@@ -135,21 +136,26 @@ namespace msc {
     };
 
     template<typename Scalar>
+    EIGEN_DEVICE_FUNC
     PinholeCamera<Scalar>::PinholeCamera():
             PinholeCamera(0, 0, 0, 0, 0, 0) {}
 
     template<typename Scalar>
+    EIGEN_DEVICE_FUNC
     PinholeCamera<Scalar>::PinholeCamera(Scalar fx, Scalar fy, Scalar u0, Scalar v0, Scalar width, Scalar height)
             : fx_(fx), fy_(fy), u0_(u0), v0_(v0), width_(width), height_(height) {
 
     }
 
     template<typename Scalar>
+    EIGEN_DEVICE_FUNC
     PinholeCamera<Scalar>::~PinholeCamera() {
 
     }
 
     template<typename Scalar>
+    inline
+    EIGEN_DEVICE_FUNC
     typename PinholeCamera<Scalar>::PixelT
     PinholeCamera<Scalar>::forwardProjection(const PinholeCamera::PointTRef &point) const {
         return PixelT(fx_ * point[0] / point[2] + u0_,
@@ -157,6 +163,8 @@ namespace msc {
     }
 
     template<typename Scalar>
+    inline
+    EIGEN_DEVICE_FUNC
     Eigen::Matrix<Scalar, 2, 3>
     PinholeCamera<Scalar>::forwardProjectionJacobian(const PinholeCamera::PointTRef &point) const {
         Eigen::Matrix<Scalar, 2, 3> jacobian;
@@ -166,6 +174,8 @@ namespace msc {
     }
 
     template<typename Scalar>
+    inline
+    EIGEN_DEVICE_FUNC
     typename PinholeCamera<Scalar>::PointT
     PinholeCamera<Scalar>::backwardProjection(const PinholeCamera::PixelTRef &pixel, Scalar depth) const {
         PointT point((pixel[0] - u0_) / fx_,
@@ -175,6 +185,7 @@ namespace msc {
 
     template<typename Scalar>
     Eigen::Matrix<Scalar, 3, 2>
+    EIGEN_DEVICE_FUNC
     PinholeCamera<Scalar>::backwardProjectionPointJac(const PinholeCamera::PixelTRef &pixel, Scalar depth) const {
         Eigen::Matrix<Scalar, 3, 2> jacobian;
         jacobian << depth / fx_,           0,
@@ -184,6 +195,7 @@ namespace msc {
     }
 
     template<typename Scalar>
+    EIGEN_DEVICE_FUNC
     Eigen::Matrix<Scalar, 3, 1>
     PinholeCamera<Scalar>::backwardProjectionDepthJac(const PinholeCamera::PixelTRef &pixel, Scalar depth) const {
         Eigen::Matrix<Scalar, 3, 1> jacobian;
@@ -194,17 +206,23 @@ namespace msc {
     }
 
     template<typename Scalar>
-    bool PinholeCamera<Scalar>::isPixelValid(Scalar x, Scalar y, std::size_t border) const {
-        return (x >= border) && (x < width_ - border) && (y >= border) && (y < height_ - border);
+    template<typename T>
+    inline
+    EIGEN_DEVICE_FUNC
+    bool PinholeCamera<Scalar>::isPixelValid(T x, T y, std::size_t border) const {
+        return x >= border && x < width_ - border && y >= border && y < height_ - border;
     }
 
     template<typename Scalar>
+    inline
+    EIGEN_DEVICE_FUNC
     bool PinholeCamera<Scalar>::isPixelValid(const PinholeCamera::PixelTRef &pixel, std::size_t border) const {
         return isPixelValid(pixel[0], pixel[1], border);
     }
 
     template<typename Scalar>
     template<typename T>
+    EIGEN_DEVICE_FUNC
     void PinholeCamera<Scalar>::resizeViewport(const T &new_width, const T &new_height) {
         const Scalar x_ratio{new_width / width_};
         const Scalar y_ratio{new_height / height_};
