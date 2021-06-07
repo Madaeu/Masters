@@ -14,6 +14,7 @@ set(core_headers
         gtsam/photometric_factor.h
         gtsam/reprojection_factor.h
         gtsam/depth_prior_factor.h
+        gtsam/sparse_geometric_factor.h
         gtsam/factor_graph.h
         mapping/mapper.h
         mapping/frame.h
