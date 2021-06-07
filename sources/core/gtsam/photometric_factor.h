@@ -153,7 +153,7 @@ namespace msc
         Eigen::MatrixXd JtJ = sys.JtJ.toDenseMatrix().template cast<double>();
         Eigen::MatrixXd Jtr = -sys.Jtr.template cast<double>();
 
-        if (sys.inliers > 0)
+        if (sys.inliers < 0)
         {
             return boost::shared_ptr<gtsam::HessianFactor>();
         }
@@ -202,7 +202,8 @@ namespace msc
         double eps = 1e-6;
         if ( !gtsam::traits<SE3T>::Equals(pose0, linearPose0_, eps) ||
              !gtsam::traits<SE3T>::Equals(pose1, linearPose1_, eps) ||
-             !gtsam::traits<CodeT>::Equals(code0, linearCode0_, eps))
+             !gtsam::traits<CodeT>::Equals(code0, linearCode0_, eps)||
+             first_)
         {
             first_ = false;
 

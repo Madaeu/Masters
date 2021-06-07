@@ -389,6 +389,7 @@ namespace msc
         }
 
         auto inliers = cameraTracker_->getInliers();
+        // undersøg inliers
         auto currentKeyframe = mapper_->getMap()->keyframes_.get(currentKeyframe_);
         auto distance = poseDistance(currentKeyframe->pose_, currentPose_);
 
