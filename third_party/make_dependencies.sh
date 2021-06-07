@@ -69,7 +69,19 @@ function build_cmake_deps()
                "-DSophus_DIR=$(realpath build/Sophus)")
    build_cmake_dep "vision_core" ${cmake_opts[@]}
 
-
+   #################
+   ##### GT-SAM
+   cmake_opts=("-DCMAKE_BUILD_TYPE=${build_type}"
+               "-DCMAKE_INSTALL_PREFIX=${install_dir}"
+               "-DGTSAM_WITH_TBB=OFF"
+               "-DGTSAM_BUILD_TESTS=OFF"
+               "-DGTSAM_BUILD_EXAMPLES_ALWAYS=OFF"
+               "-DGTSAM_BUILD_EXAMPLES_ALWAYS=OFF"
+               "-DGTSAM_BUILD_UNSTABLE=OFF"
+               "-DGTSAM_BUILD_WITH_MARCH_NATIVE=OFF"
+               "-DGTSAM_USE_SYSTEM_EIGEN=ON"
+               "-Eigen_DIR=$(realpath install/share/eigen3/cmake)")
+   build_cmake_dep "gtsam" ${cmake_opts[@]}
 }
 
 function usage()

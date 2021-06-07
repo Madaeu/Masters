@@ -138,6 +138,7 @@ namespace msc
 
         auto tempBuffer = vc::Buffer1DView<ReductionItem, vc::TargetHost>(&result, 1);
         tempBuffer.copyFrom(bscratch2_);
+
         return result;
     }
 

@@ -15,7 +15,7 @@ namespace msc
     public:
         using CPUBuffer = vc::RuntimeBufferPyramidManaged<Scalar, vc::TargetHost>;
         using GPUBuffer = vc::RuntimeBufferPyramidManaged<Scalar, vc::TargetDeviceCUDA>;
-        using Ptr = std::shared_ptr<SyncronizedBufferPyramid<Scalar>;
+        using Ptr = std::shared_ptr<SynchronizedBufferPyramid<Scalar>>;
 
         SynchronizedBufferPyramid() = delete;
 
@@ -128,7 +128,7 @@ namespace msc
                 std::cout << "CPU and GPU are not synchronized! \n";
         }
 
-        void synchronizeCPU()
+        void synchronizeCPU() const
         {
             if(!cpuBuffer_)
             {
@@ -145,7 +145,7 @@ namespace msc
             gpuModified_ = false;
         }
 
-        void synchronizeGPU()
+        void synchronizeGPU() const
         {
             if(!gpuBuffer_)
             {

@@ -72,7 +72,7 @@ namespace msc
         void setStepThreadsBlocks(int threads, int blocks);
 
     private:
-        static const int max_blocks = 1024;
+        //static const int max_blocks = 1024;
         SFMAlignerParameters parameters_;
         cuda::DeviceInfo deviceInfo_;
         vc::Buffer1DManaged<ReductionItem, vc::TargetDeviceCUDA> bscratch1_;
