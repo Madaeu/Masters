@@ -300,6 +300,54 @@ namespace msc
         }
 
         template class OptimizeReprojection<float, 32>;
+
+/* ************************************************************************* */
+
+        template<typename Scalar, int CS>
+        OptimizeGeometric<Scalar, CS>::OptimizeGeometric(KeyframePtr keyframe0,
+                                                         KeyframePtr keyframe1, int iters,
+                                                         msc::PinholeCamera<Scalar> camera,
+                                                         int numberOfPoints, float huberDelta,
+                                                         bool stochastic)
+        : OptimizeWork<Scalar>(iters, false),
+          keyframe0_(keyframe0), keyframe1_(keyframe1),
+          camera_(camera), numberOfPoints_(numberOfPoints),
+          huberDelta_(huberDelta), stochastic_(stochastic)
+          {}
+
+        template<typename Scalar, int CS>
+        gtsam::NonlinearFactorGraph OptimizeGeometric<Scalar, CS>::constructFactors()
+        {
+            gtsam::NonlinearFactorGraph graph;
+            auto pose0Key = poseKey(keyframe0_->id_);
+            auto pose1Key = poseKey(keyframe1_->id_);
+            auto code0Key = codeKey(keyframe0_->id_);
+            auto code1Key = codeKey(keyframe1_->id_);
+
+            graph.emplace_shared<GeometricFactorT>(camera_, keyframe0_, keyframe1_, pose0Key, pose1Key,
+                                                   code0Key, code1Key, numberOfPoints_, huberDelta_,
+                                                   stochastic_);
+
+            return graph;
+        }
+
+        template<typename Scalar, int CS>
+        bool OptimizeGeometric<Scalar, CS>::involves(FramePtr ptr) const
+        {
+            return keyframe0_ == ptr || keyframe1_ == ptr;
+        }
+
+        template<typename Scalar, int CS>
+        std::string OptimizeGeometric<Scalar, CS>::name()
+        {
+            std::stringstream  ss;
+            ss << this->id() << "OptimizeGeo " << keyframe0_->name() << " -> " << keyframe1_->name()
+               << " iterators = " << this->iterators_[this->activeLevel_]
+               << " finished = " << this->finished();
+            return ss.str();
+        }
+
+        template class OptimizeGeometric<float, 32>;
     } //namespace work
 
 } //namespace msc

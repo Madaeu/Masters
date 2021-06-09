@@ -12,6 +12,7 @@
 #include "gtsam_utilities.h"
 #include "photometric_factor.h"
 #include "reprojection_factor.h"
+#include "sparse_geometric_factor.h"
 
 #include <functional>
 
@@ -190,6 +191,33 @@ namespace msc
             int maxIterations_;
             float threshold_;
             bool finished_ = false;
+        };
+
+        template<typename Scalar, int CS>
+        class OptimizeGeometric : public OptimizeWork<Scalar>
+        {
+        public:
+            using FramePtr = typename msc::Frame<Scalar>::Ptr;
+            using KeyframePtr = typename msc::Keyframe<Scalar>::Ptr;
+            using GeometricFactorT = SparseGeometricFactor<Scalar, CS>;
+
+            OptimizeGeometric(KeyframePtr keyframe0, KeyframePtr keyframe1,
+                              int iters, msc::PinholeCamera<Scalar> camera,
+                              int numberOfPoints, float huberDelta, bool stochastic);
+
+            virtual ~OptimizeGeometric() = default;
+
+            virtual gtsam::NonlinearFactorGraph constructFactors() override;
+            virtual bool involves(FramePtr ptr) const override;
+            virtual std::string name() override;
+
+        private:
+            KeyframePtr keyframe0_;
+            KeyframePtr keyframe1_;
+            msc::PinholeCamera<Scalar> camera_;
+            int numberOfPoints_;
+            float huberDelta_;
+            bool stochastic_;
         };
 
     } //namespace work

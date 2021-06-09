@@ -81,14 +81,14 @@ namespace msc
         Scalar huberDelta_;
 
         mutable KeyframePtr keyframe0_;
-        mutable keyframePtr keyframe1_;
+        mutable KeyframePtr keyframe1_;
 
         bool stochastic_;
 
     };
 
     template<typename Scalar, int CS>
-    SparseGeometricFactor<Scalar, CS>::SparseGeometricFactor<typename Scalar, int CS>(
+    SparseGeometricFactor<Scalar, CS>::SparseGeometricFactor(
             const msc::PinholeCamera<Scalar> &camera, const KeyframePtr &keyframe0, const KeyframePtr &keyframe1,
             const gtsam::Key &pose0Key, const gtsam::Key &pose1Key, const gtsam::Key &code0Key,
             const gtsam::Key &code1Key, int numberOfPoints, Scalar huberDelta, bool stochastic)
@@ -108,7 +108,7 @@ namespace msc
     }
 
     template<typename Scalar, int CS>
-    SparseGeometricFactor<Scalar, CS>::SparseGeometricFactor<typename Scalar, int CS>(
+    SparseGeometricFactor<Scalar, CS>::SparseGeometricFactor(
             const msc::PinholeCamera<Scalar> &camera, const std::vector<Point> &points, const KeyframePtr &keyframe0,
             const KeyframePtr &keyframe1, const gtsam::Key &pose0Key, const gtsam::Key &pose1Key,
             const gtsam::Key &code0Key, const gtsam::Key &code1Key, Scalar huberDelta, bool stochastic)
@@ -215,7 +215,7 @@ namespace msc
 
             auto proximity0JacImage = keyframe0_->jacobianPyramid_.getLevelCPU(0);
             Eigen::Map<Eigen::Matrix<Scalar, 1, CS>> proximity0JacCode(&proximity0JacImage((int)point.x*CS, (int)point.y));
-            Scalar proximity0ZeroCode = keyframe0_->proximityPyramid.getLevelCPU(0)(point.x, point.y);
+            Scalar proximity0ZeroCode = keyframe0_->proximityPyramid_.getLevelCPU(0)(point.x, point.y);
 
             Scalar depth0 = msc::depthFromCode(code0, proximity0JacCode, proximity0ZeroCode, avgDepth);
             msc::Correspondence<Scalar> correspondence = findCorrespondence(point.x, point.y, depth0, camera_, pose10);
@@ -236,7 +236,7 @@ namespace msc
 
             auto proximity1JacImage = keyframe1_->jacobianPyramid_.getLevelCPU(0);
             Eigen::Map<Eigen::Matrix<Scalar, 1, CS>> proximity1JacCode(&proximity1JacImage(pixel1NearestN(0)*CS, pixel1NearestN(1)));
-            Scalar proximity1ZeroCode = keyframe1_->proximityPyramid.getLevelCPU(0)(pixel1NearestN(0), pixel1NearestN(1));
+            Scalar proximity1ZeroCode = keyframe1_->proximityPyramid_.getLevelCPU(0)(pixel1NearestN(0), pixel1NearestN(1));
             Scalar depth1 = msc::depthFromCode(code1, proximity1JacCode, proximity1ZeroCode, avgDepth);
 
             Scalar error = depth1 - depth1Point;
