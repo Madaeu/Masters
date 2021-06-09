@@ -12,6 +12,10 @@ function build_cmake_dep()
    local cmakeopts=("$@")
 
    echo "Building ${depdir})"
+   
+   # disable eigen vectorization and alignment
+   # we had nasty segfaults without that
+   export CXXFLAGS="-DEIGEN_DONT_VECTORIZE -DEIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT -DEIGEN_DONT_ALIGN"
 
    builddir=${build_dir}/${depdir}
    ((rebuild)) && ${CMAKE} -E remove_directory ${builddir}
@@ -28,13 +32,56 @@ function build_cmake_deps()
    build_dir="$(pwd)/build"
    install_dir="$(pwd)/install"
    
+  #################
+  ##### Eigen
+  cmake_opts=("-DCMAKE_BUILD_TYPE=${build_type}"
+              "-DCMAKE_INSTALL_PREFIX=${install_dir}"
+              "-DCMAKE_EXPORT_NO_PACKAGE_REGISTRY=ON")
+  build_cmake_dep "eigen" ${cmake_opts[@]}
+
+  eigen_include_dir="${install_dir}/include/eigen3"
+   
+   #################
+   ##### Sophus
+   cmake_opts=("-DCMAKE_BUILD_TYPE=${build_type}"
+               "-DCMAKE_INSTALL_PREFIX=${install_dir}"
+	       "-DCMAKE_EXPORT_NO_PACKAGE_REGISTRY=ON"
+               "-DBUILD_TESTS=OFF"
+               "-DEIGEN3_INCLUDE_DIR=${eigen_include_dir}")
+   build_cmake_dep "Sophus" ${cmake_opts[@]}
+
+
+  #################
+  ##### DBoW2
+  cmake_opts=("-DCMAKE_BUILD_TYPE=${build_type}"
+              "-DCMAKE_INSTALL_PREFIX=${install_dir}"
+              "-Eigen_DIR=$(realpath install/share/eigen3/cmake)")
+  build_cmake_dep "DBoW2" ${cmake_opts[@]}
 
    #################
-   ##### DBoW2
+   ##### vision_core
    cmake_opts=("-DCMAKE_BUILD_TYPE=${build_type}"
-               "-DCMAKE_INSTALL_PREFIX=${install_dir}")
-   build_cmake_dep "DBoW2" ${cmake_opts[@]}
+               "-DCMAKE_INSTALL_PREFIX=${install_dir}"
+               "-DCMAKE_EXPORT_NO_PACKAGE_REGISTRY=ON"
+               "-DUSE_OPENCL=OFF"
+               "-DBUILD_TESTS=OFF"
+               "-DEigen3_DIR=$(realpath install/share/eigen3/cmake)"
+               "-DSophus_DIR=$(realpath build/Sophus)")
+   build_cmake_dep "vision_core" ${cmake_opts[@]}
 
+   #################
+   ##### GT-SAM
+   cmake_opts=("-DCMAKE_BUILD_TYPE=${build_type}"
+               "-DCMAKE_INSTALL_PREFIX=${install_dir}"
+               "-DGTSAM_WITH_TBB=OFF"
+               "-DGTSAM_BUILD_TESTS=OFF"
+               "-DGTSAM_BUILD_EXAMPLES_ALWAYS=OFF"
+               "-DGTSAM_BUILD_EXAMPLES_ALWAYS=OFF"
+               "-DGTSAM_BUILD_UNSTABLE=OFF"
+               "-DGTSAM_BUILD_WITH_MARCH_NATIVE=OFF"
+               "-DGTSAM_USE_SYSTEM_EIGEN=ON"
+               "-Eigen_DIR=$(realpath install/share/eigen3/cmake)")
+   build_cmake_dep "gtsam" ${cmake_opts[@]}
 }
 
 function usage()
